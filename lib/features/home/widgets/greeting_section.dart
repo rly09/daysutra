@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/date_utils.dart';
-import 'package:lucide_icons_flutter/lucide_icons.dart';
-import '../../search/search_screen.dart';
 
 class GreetingSection extends StatelessWidget {
   const GreetingSection({super.key});
@@ -31,13 +29,6 @@ class GreetingSection extends StatelessWidget {
                         fontWeight: FontWeight.w500,
                       ),
                 ).animate().fadeIn(duration: 400.ms).slideX(begin: 0.2, end: 0),
-                const SizedBox(width: 8),
-                IconButton(
-                  icon: const Icon(LucideIcons.search, color: AppColors.slateGray),
-                  onPressed: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (_) => const SearchScreen()));
-                  },
-                ).animate().fadeIn(duration: 400.ms),
               ],
             ),
           ],
