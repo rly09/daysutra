@@ -3,8 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import 'package:flutter_animate/flutter_animate.dart';
 
-import '../../core/theme/app_colors.dart';
-
 class FloatingNavBar extends ConsumerWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;
@@ -25,14 +23,14 @@ class FloatingNavBar extends ConsumerWidget {
       clipBehavior: Clip.none,
       children: [
         Container(
-          margin: const EdgeInsets.only(bottom: 24),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          margin: const EdgeInsets.only(bottom: 30),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
           decoration: BoxDecoration(
-            color: theme.colorScheme.surface.withOpacity(0.95),
+            color: theme.colorScheme.surface.withValues(alpha: 0.95),
             borderRadius: BorderRadius.circular(999),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.05),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 24,
                 offset: const Offset(0, 4),
               ),
@@ -46,7 +44,7 @@ class FloatingNavBar extends ConsumerWidget {
                 isSelected: currentIndex == 0,
                 onTap: () => onTap(0),
               ),
-              const SizedBox(width: 56), // Space for floating button
+              const SizedBox(width: 84),
               _NavBarIcon(
                 icon: LucideIcons.settings,
                 isSelected: currentIndex == 1,
@@ -55,10 +53,7 @@ class FloatingNavBar extends ConsumerWidget {
             ],
           ),
         ),
-        Positioned(
-          bottom: 56, // Adjusted to float more prominently on top
-          child: _AddButton(onTap: onAddTap),
-        ),
+        Positioned(bottom: 62, child: _AddButton(onTap: onAddTap)),
       ],
     );
   }
@@ -83,15 +78,13 @@ class _NavBarIcon extends StatelessWidget {
       behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
-        padding: const EdgeInsets.all(10), // Slightly reduced padding
-        decoration: BoxDecoration(
-          color: isSelected ? theme.colorScheme.primary : Colors.transparent,
-          shape: BoxShape.circle,
-        ),
+        padding: const EdgeInsets.all(12),
         child: Icon(
           icon,
-          color: isSelected ? theme.colorScheme.onPrimary : theme.colorScheme.onSurface.withOpacity(0.4),
-          size: 20, // Reduced icon size
+          color: isSelected
+              ? theme.colorScheme.primary
+              : theme.colorScheme.onSurface.withValues(alpha: 0.4),
+          size: 19,
         ),
       ),
     );
@@ -107,7 +100,8 @@ class _AddButton extends StatefulWidget {
   State<_AddButton> createState() => _AddButtonState();
 }
 
-class _AddButtonState extends State<_AddButton> with SingleTickerProviderStateMixin {
+class _AddButtonState extends State<_AddButton>
+    with SingleTickerProviderStateMixin {
   bool _isHovered = false;
 
   @override
@@ -118,27 +112,30 @@ class _AddButtonState extends State<_AddButton> with SingleTickerProviderStateMi
       onExit: (_) => setState(() => _isHovered = false),
       child: GestureDetector(
         onTap: widget.onTap,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          width: 52, // Slightly reduced width
-          height: 52, // Slightly reduced height
-          decoration: BoxDecoration(
-            color: theme.colorScheme.primary,
-            shape: BoxShape.circle,
-            boxShadow: [
-              BoxShadow(
-                color: theme.colorScheme.primary.withOpacity(0.3),
-                blurRadius: 12,
-                offset: const Offset(0, 4),
-              )
-            ],
-          ),
-          child: Icon(
-            LucideIcons.plus,
-            color: theme.colorScheme.onPrimary,
-            size: 24, // Reduced icon size
-          ),
-        ).animate(target: _isHovered ? 1 : 0).scaleXY(end: 1.1, duration: 200.ms),
+        child:
+            AnimatedContainer(
+                  duration: const Duration(milliseconds: 200),
+                  width: 56,
+                  height: 56,
+                  decoration: BoxDecoration(
+                    color: theme.colorScheme.primary,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: theme.colorScheme.primary.withValues(alpha: 0.3),
+                        blurRadius: 12,
+                        offset: const Offset(0, 4),
+                      ),
+                    ],
+                  ),
+                  child: Icon(
+                    LucideIcons.plus,
+                    color: theme.colorScheme.onPrimary,
+                    size: 24,
+                  ),
+                )
+                .animate(target: _isHovered ? 1 : 0)
+                .scaleXY(end: 1.1, duration: 200.ms),
       ),
     );
   }
