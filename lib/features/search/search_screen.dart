@@ -28,7 +28,6 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
     final notesAsync = ref.watch(notesProvider);
     final goalsAsync = ref.watch(goalsProvider);
     final tasksAsync = ref.watch(tasksProvider);
-    final journalsAsync = ref.watch(journalProvider);
 
     List<Widget> results = [];
 
@@ -68,18 +67,6 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
             leading: const Icon(LucideIcons.target),
             title: Text(g.title),
             subtitle: const Text('Life Goal'),
-          ));
-        }
-      }
-      
-      // Search Journals
-      if (journalsAsync.hasValue) {
-        final matches = journalsAsync.value!.where((j) => j.title.toLowerCase().contains(queryLower) || j.content.toLowerCase().contains(queryLower)).toList();
-        for (var j in matches) {
-          results.add(ListTile(
-            leading: const Icon(LucideIcons.book),
-            title: Text(j.title),
-            subtitle: const Text('Journal'),
           ));
         }
       }

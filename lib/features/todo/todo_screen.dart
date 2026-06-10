@@ -4,6 +4,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../data/repositories/providers.dart';
 import '../../core/theme/app_colors.dart';
+import '../../presentation/widgets/simple_card.dart';
 import 'todo_modal.dart';
 
 class TodoScreen extends ConsumerWidget {
@@ -23,7 +24,8 @@ class TodoScreen extends ConsumerWidget {
               showModalBottomSheet(
                 context: context,
                 isScrollControlled: true,
-                backgroundColor: Theme.of(context).colorScheme.surface,
+                backgroundColor: Colors.transparent,
+                elevation: 0,
                 builder: (_) => const TodoModal(),
               );
             },
@@ -51,13 +53,9 @@ class TodoScreen extends ConsumerWidget {
             itemCount: tasks.length,
             itemBuilder: (context, index) {
               final task = tasks[index];
-              return Container(
+              return SimpleCard(
                 margin: const EdgeInsets.only(bottom: 12),
-                decoration: BoxDecoration(
-                  color: AppColors.white,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: AppColors.softBone),
-                ),
+                padding: EdgeInsets.zero,
                 child: ListTile(
                   leading: Checkbox(
                     value: task.isCompleted,

@@ -20,7 +20,8 @@ class LifeGoalCard extends ConsumerWidget {
         showModalBottomSheet(
           context: context,
           isScrollControlled: true,
-          backgroundColor: Theme.of(context).colorScheme.surface,
+          backgroundColor: Colors.transparent,
+          elevation: 0,
           builder: (_) => GoalModal(
             existingGoal: goalsAsync.valueOrNull?.isNotEmpty == true 
                 ? goalsAsync.value!.first 

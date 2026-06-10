@@ -22,32 +22,46 @@ class GlassCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget card = GlassmorphicContainer(
-      width: width,
-      height: height,
-      borderRadius: borderRadius,
-      blur: 20,
-      alignment: Alignment.center,
-      border: 1.5,
-      linearGradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [
-          Colors.white.withOpacity(0.05),
-          Colors.white.withOpacity(0.05),
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    
+    Widget card = Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(borderRadius),
+        boxShadow: [
+          BoxShadow(
+            color: (isDark ? Colors.black : AppColors.inkBlack).withValues(alpha: isDark ? 0.2 : 0.05),
+            blurRadius: 30,
+            offset: const Offset(0, 10),
+          ),
         ],
       ),
-      borderGradient: LinearGradient(
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-        colors: [
-          Colors.white.withOpacity(0.1),
-          Colors.white.withOpacity(0.1),
-        ],
-      ),
-      child: Padding(
-        padding: padding,
-        child: child,
+      child: GlassmorphicContainer(
+        width: width,
+        height: height,
+        borderRadius: borderRadius,
+        blur: 20,
+        alignment: Alignment.center,
+        border: 1.5,
+        linearGradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            (isDark ? Colors.white : Colors.white).withValues(alpha: isDark ? 0.05 : 0.4),
+            (isDark ? Colors.white : Colors.white).withValues(alpha: isDark ? 0.05 : 0.4),
+          ],
+        ),
+        borderGradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            (isDark ? Colors.white : AppColors.inkBlack).withValues(alpha: isDark ? 0.1 : 0.05),
+            (isDark ? Colors.white : AppColors.inkBlack).withValues(alpha: isDark ? 0.1 : 0.05),
+          ],
+        ),
+        child: Padding(
+          padding: padding,
+          child: child,
+        ),
       ),
     );
 

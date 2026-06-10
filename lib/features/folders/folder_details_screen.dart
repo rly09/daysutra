@@ -5,6 +5,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../domain/models/folder.dart';
 import '../../data/repositories/providers.dart';
 import '../../core/theme/app_colors.dart';
+import '../../presentation/widgets/simple_card.dart';
 import '../notes/note_editor_screen.dart';
 
 class FolderDetailsScreen extends ConsumerWidget {
@@ -52,34 +53,25 @@ class FolderDetailsScreen extends ConsumerWidget {
             itemCount: folderNotes.length,
             itemBuilder: (context, index) {
               final note = folderNotes[index];
-              return InkWell(
+              return SimpleCard(
                 onTap: () {
                   Navigator.push(context, MaterialPageRoute(builder: (_) => NoteEditorScreen(existingNote: note)));
                 },
-                child: Container(
-                  margin: const EdgeInsets.only(bottom: 16),
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: AppColors.white,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(color: AppColors.softBone),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        note.title.isNotEmpty ? note.title : 'Untitled',
-                        style: Theme.of(context).textTheme.titleMedium,
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        note.content,
-                        style: Theme.of(context).textTheme.bodyMedium,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      note.title.isNotEmpty ? note.title : 'Untitled',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      note.content,
+                      style: Theme.of(context).textTheme.bodyMedium,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
                 ),
               );
             },
@@ -90,9 +82,7 @@ class FolderDetailsScreen extends ConsumerWidget {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          // Open new note with this folder ID
-          // Since NoteEditorScreen auto-saves, we can't easily pass folderId directly unless we modify it.
-          // Let's modify NoteEditorScreen constructor soon.
+          Navigator.push(context, MaterialPageRoute(builder: (_) => NoteEditorScreen(initialFolderId: folder.id)));
         },
         backgroundColor: AppColors.inkBlack,
         foregroundColor: AppColors.canvasCream,

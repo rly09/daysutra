@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 
 import '../../domain/models/folder.dart';
-import '../../domain/models/journal_entry.dart';
 import '../../domain/models/life_goal.dart';
 import '../../domain/models/note.dart';
 import '../../domain/models/todo_task.dart';
@@ -23,10 +22,6 @@ final tasksBoxProvider = Provider<Box<TodoTask>>((ref) {
 
 final goalsBoxProvider = Provider<Box<LifeGoal>>((ref) {
   return Hive.box<LifeGoal>(HiveRepository.goalsBoxName);
-});
-
-final journalBoxProvider = Provider<Box<JournalEntry>>((ref) {
-  return Hive.box<JournalEntry>(HiveRepository.journalBoxName);
 });
 
 // ValueListenable providers for reactive UI
@@ -52,11 +47,6 @@ final notesProvider = StreamProvider<List<Note>>((ref) {
 
 final foldersProvider = StreamProvider<List<Folder>>((ref) {
   final box = ref.watch(foldersBoxProvider);
-  return box.watch().map((event) => box.values.toList()).startWith(box.values.toList());
-});
-
-final journalProvider = StreamProvider<List<JournalEntry>>((ref) {
-  final box = ref.watch(journalBoxProvider);
   return box.watch().map((event) => box.values.toList()).startWith(box.values.toList());
 });
 

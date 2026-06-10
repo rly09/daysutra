@@ -1,6 +1,5 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import '../../domain/models/folder.dart';
-import '../../domain/models/journal_entry.dart';
 import '../../domain/models/life_goal.dart';
 import '../../domain/models/note.dart';
 import '../../domain/models/todo_task.dart';
@@ -10,7 +9,6 @@ class HiveRepository {
   static const String notesBoxName = 'notesBox';
   static const String tasksBoxName = 'tasksBox';
   static const String goalsBoxName = 'goalsBox';
-  static const String journalBoxName = 'journalBox';
 
   static Future<void> init() async {
     await Hive.initFlutter();
@@ -20,14 +18,12 @@ class HiveRepository {
     Hive.registerAdapter(NoteAdapter());
     Hive.registerAdapter(TodoTaskAdapter());
     Hive.registerAdapter(LifeGoalAdapter());
-    Hive.registerAdapter(JournalEntryAdapter());
 
     // Open Boxes
     await Hive.openBox<Folder>(foldersBoxName);
     await Hive.openBox<Note>(notesBoxName);
     await Hive.openBox<TodoTask>(tasksBoxName);
     await Hive.openBox<LifeGoal>(goalsBoxName);
-    await Hive.openBox<JournalEntry>(journalBoxName);
   }
 
   // Generic methods

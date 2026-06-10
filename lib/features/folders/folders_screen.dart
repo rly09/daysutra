@@ -4,6 +4,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../data/repositories/providers.dart';
 import '../../core/theme/app_colors.dart';
+import '../../presentation/widgets/simple_card.dart';
 import 'folder_modal.dart';
 import 'folder_details_screen.dart';
 
@@ -24,7 +25,8 @@ class FoldersScreen extends ConsumerWidget {
               showModalBottomSheet(
                 context: context,
                 isScrollControlled: true,
-                backgroundColor: Theme.of(context).colorScheme.surface,
+                backgroundColor: Colors.transparent,
+                elevation: 0,
                 builder: (_) => const FolderModal(),
               );
             },
@@ -58,32 +60,25 @@ class FoldersScreen extends ConsumerWidget {
             itemCount: folders.length,
             itemBuilder: (context, index) {
               final folder = folders[index];
-              return InkWell(
+              return SimpleCard(
+                margin: EdgeInsets.zero,
+                padding: const EdgeInsets.all(16),
                 onTap: () {
                   Navigator.push(context, MaterialPageRoute(builder: (_) => FolderDetailsScreen(folder: folder)));
                 },
-                borderRadius: BorderRadius.circular(24),
-                child: Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: AppColors.white,
-                    borderRadius: BorderRadius.circular(24),
-                    border: Border.all(color: AppColors.softBone),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      const Icon(LucideIcons.folder, size: 32, color: AppColors.lightSignalOrange),
-                      const SizedBox(height: 16),
-                      Text(
-                        folder.name,
-                        style: Theme.of(context).textTheme.titleMedium,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ],
-                  ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    const Icon(LucideIcons.folder, size: 32, color: AppColors.lightSignalOrange),
+                    const SizedBox(height: 16),
+                    Text(
+                      folder.name,
+                      style: Theme.of(context).textTheme.titleMedium,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ],
                 ),
               );
             },

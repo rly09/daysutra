@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../domain/models/folder.dart';
 import '../../data/repositories/providers.dart';
 import '../../presentation/widgets/pill_button.dart';
+import '../../presentation/widgets/custom_feedback.dart';
+import '../../core/theme/app_colors.dart';
 
 class FolderModal extends ConsumerStatefulWidget {
   const FolderModal({super.key});
@@ -36,13 +39,20 @@ class _FolderModalState extends ConsumerState<FolderModal> {
     );
     box.add(folder);
     Navigator.of(context).pop();
+    AppFeedback.showSuccessSnackBar(context, 'Folder created');
   }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    final theme = Theme.of(context);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+      ),
       padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
+        bottom: MediaQuery.of(context).viewInsets.bottom + 24,
         left: 24,
         right: 24,
         top: 24,
@@ -51,22 +61,57 @@ class _FolderModalState extends ConsumerState<FolderModal> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            'New Folder',
-            style: Theme.of(context).textTheme.titleLarge,
+          Center(
+            child: Container(
+              width: 40,
+              height: 4,
+              margin: const EdgeInsets.only(bottom: 24),
+              decoration: BoxDecoration(
+                color: AppColors.dustTaupe.withValues(alpha: 0.5),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
           ),
-          const SizedBox(height: 16),
+          Row(
+            children: [
+              Icon(LucideIcons.folderPlus, color: theme.colorScheme.secondary),
+              const SizedBox(width: 12),
+              Text(
+                'New Folder',
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 24),
           TextField(
             controller: _nameController,
-            decoration: const InputDecoration(
+            decoration: InputDecoration(
               hintText: 'Folder Name',
-              border: InputBorder.none,
+              hintStyle: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.4)),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5)),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5)),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide(color: theme.colorScheme.secondary, width: 2),
+              ),
+              filled: true,
+              fillColor: theme.colorScheme.onSurface.withValues(alpha: 0.05),
             ),
-            style: Theme.of(context).textTheme.titleMedium,
+            style: theme.textTheme.titleMedium?.copyWith(
+              color: theme.colorScheme.onSurface,
+            ),
             autofocus: true,
             onSubmitted: (_) => _save(),
           ),
-          const SizedBox(height: 24),
+          const SizedBox(height: 32),
           Row(
             mainAxisAlignment: MainAxisAlignment.end,
             children: [
@@ -75,7 +120,7 @@ class _FolderModalState extends ConsumerState<FolderModal> {
                 isPrimary: false,
                 onPressed: () => Navigator.of(context).pop(),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 12),
               PillButton(
                 label: 'Save',
                 isPrimary: true,
@@ -83,7 +128,6 @@ class _FolderModalState extends ConsumerState<FolderModal> {
               ),
             ],
           ),
-          const SizedBox(height: 24),
         ],
       ),
     );

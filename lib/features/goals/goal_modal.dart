@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../domain/models/life_goal.dart';
 import '../../data/repositories/providers.dart';
 import '../../presentation/widgets/pill_button.dart';
+import '../../presentation/widgets/custom_feedback.dart';
+import '../../core/theme/app_colors.dart';
 
 class GoalModal extends ConsumerStatefulWidget {
   final LifeGoal? existingGoal;
@@ -16,19 +19,16 @@ class GoalModal extends ConsumerStatefulWidget {
 
 class _GoalModalState extends ConsumerState<GoalModal> {
   late TextEditingController _titleController;
-  late TextEditingController _descController;
 
   @override
   void initState() {
     super.initState();
     _titleController = TextEditingController(text: widget.existingGoal?.title ?? '');
-    _descController = TextEditingController(text: widget.existingGoal?.description ?? '');
   }
 
   @override
   void dispose() {
     _titleController.dispose();
-    _descController.dispose();
     super.dispose();
   }
 
@@ -36,32 +36,48 @@ class _GoalModalState extends ConsumerState<GoalModal> {
     if (_titleController.text.trim().isEmpty) return;
 
     final box = ref.read(goalsBoxProvider);
-    if (widget.existingGoal != null) {
+    final bool isUpdating = widget.existingGoal != null;
+
+    if (isUpdating) {
       widget.existingGoal!.title = _titleController.text.trim();
-      widget.existingGoal!.description = _descController.text.trim();
+      // Keep existing description or clear it if the user wants it removed entirely from data
+      // For now, just keeping it unchanged or empty
       widget.existingGoal!.save();
     } else {
       final goal = LifeGoal(
         title: _titleController.text.trim(),
-        description: _descController.text.trim(),
+        description: '', // Removing description from UI, so defaulting to empty
       );
       box.add(goal);
     }
+    
     Navigator.of(context).pop();
+    
+    AppFeedback.showSuccessSnackBar(
+      context, 
+      isUpdating ? 'Goal updated successfully' : 'Life goal added! Stay focused.',
+    );
   }
 
   void _delete() {
     if (widget.existingGoal != null) {
       widget.existingGoal!.delete();
+      Navigator.of(context).pop();
+      AppFeedback.showInfoSnackBar(context, 'Goal deleted');
     }
-    Navigator.of(context).pop();
   }
 
   @override
   Widget build(BuildContext context) {
-    return Padding(
+    final theme = Theme.of(context);
+    
+    return Container(
+      decoration: BoxDecoration(
+        color: theme.colorScheme.surface,
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(32)),
+      ),
       padding: EdgeInsets.only(
-        bottom: MediaQuery.of(context).viewInsets.bottom,
+        bottom: MediaQuery.of(context).viewInsets.bottom + 24,
         left: 24,
         right: 24,
         top: 24,
@@ -70,38 +86,63 @@ class _GoalModalState extends ConsumerState<GoalModal> {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            widget.existingGoal == null ? 'Add Life Goal' : 'Edit Life Goal',
-            style: Theme.of(context).textTheme.titleLarge,
-          ),
-          const SizedBox(height: 16),
-          TextField(
-            controller: _titleController,
-            decoration: const InputDecoration(
-              hintText: 'What is your main goal?',
-              border: InputBorder.none,
+          Center(
+            child: Container(
+              width: 40,
+              height: 4,
+              margin: const EdgeInsets.only(bottom: 24),
+              decoration: BoxDecoration(
+                color: AppColors.dustTaupe.withValues(alpha: 0.5),
+                borderRadius: BorderRadius.circular(2),
+              ),
             ),
-            style: Theme.of(context).textTheme.titleMedium,
-            autofocus: true,
           ),
-          const Divider(),
-          TextField(
-            controller: _descController,
-            decoration: const InputDecoration(
-              hintText: 'Describe it...',
-              border: InputBorder.none,
-            ),
-            style: Theme.of(context).textTheme.bodyLarge,
-            maxLines: 3,
+          Row(
+            children: [
+              const Icon(LucideIcons.target, color: AppColors.signalOrange),
+              const SizedBox(width: 12),
+              Text(
+                widget.existingGoal == null ? 'Add Life Goal' : 'Edit Life Goal',
+                style: theme.textTheme.titleLarge?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 24),
+          TextField(
+            controller: _titleController,
+            decoration: InputDecoration(
+              hintText: 'What is your main goal?',
+              hintStyle: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.4)),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5)),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: BorderSide(color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5)),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(16),
+                borderSide: const BorderSide(color: AppColors.signalOrange, width: 2),
+              ),
+              filled: true,
+              fillColor: theme.colorScheme.onSurface.withValues(alpha: 0.05),
+            ),
+            style: theme.textTheme.titleMedium?.copyWith(
+              color: theme.colorScheme.onSurface,
+            ),
+            autofocus: true,
+            onSubmitted: (_) => _save(),
+          ),
+          const SizedBox(height: 32),
           Row(
-            mainAxisAlignment: MainAxisAlignment.end,
             children: [
               if (widget.existingGoal != null)
-                TextButton(
+                IconButton(
                   onPressed: _delete,
-                  child: Text('Delete', style: TextStyle(color: Theme.of(context).colorScheme.error)),
+                  icon: const Icon(LucideIcons.trash2, color: AppColors.signalOrange),
                 ),
               const Spacer(),
               PillButton(
@@ -109,7 +150,7 @@ class _GoalModalState extends ConsumerState<GoalModal> {
                 isPrimary: false,
                 onPressed: () => Navigator.of(context).pop(),
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 12),
               PillButton(
                 label: 'Save',
                 isPrimary: true,
@@ -117,7 +158,6 @@ class _GoalModalState extends ConsumerState<GoalModal> {
               ),
             ],
           ),
-          const SizedBox(height: 24),
         ],
       ),
     );

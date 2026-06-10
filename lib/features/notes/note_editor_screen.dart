@@ -3,12 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../domain/models/note.dart';
 import '../../data/repositories/providers.dart';
-import '../../presentation/widgets/pill_button.dart';
 
 class NoteEditorScreen extends ConsumerStatefulWidget {
   final Note? existingNote;
+  final String? initialFolderId;
 
-  const NoteEditorScreen({super.key, this.existingNote});
+  const NoteEditorScreen({super.key, this.existingNote, this.initialFolderId});
 
   @override
   ConsumerState<NoteEditorScreen> createState() => _NoteEditorScreenState();
@@ -22,7 +22,7 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
   @override
   void initState() {
     super.initState();
-    _currentNote = widget.existingNote ?? Note();
+    _currentNote = widget.existingNote ?? Note(folderId: widget.initialFolderId ?? '');
     _titleController = TextEditingController(text: _currentNote.title);
     _contentController = TextEditingController(text: _currentNote.content);
     
