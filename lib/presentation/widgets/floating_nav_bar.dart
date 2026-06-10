@@ -19,36 +19,47 @@ class FloatingNavBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 24, left: 48, right: 48),
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
-      decoration: BoxDecoration(
-        color: AppColors.white.withOpacity(0.9),
-        borderRadius: BorderRadius.circular(999),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x0A000000), // ~4% opacity
-            blurRadius: 24,
-            offset: Offset(0, 4),
+    final theme = Theme.of(context);
+    return Stack(
+      alignment: Alignment.bottomCenter,
+      clipBehavior: Clip.none,
+      children: [
+        Container(
+          margin: const EdgeInsets.only(bottom: 24),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+          decoration: BoxDecoration(
+            color: theme.colorScheme.surface.withOpacity(0.95),
+            borderRadius: BorderRadius.circular(999),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 24,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
-        ],
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          _NavBarIcon(
-            icon: LucideIcons.home,
-            isSelected: currentIndex == 0,
-            onTap: () => onTap(0),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              _NavBarIcon(
+                icon: LucideIcons.home,
+                isSelected: currentIndex == 0,
+                onTap: () => onTap(0),
+              ),
+              const SizedBox(width: 56), // Space for floating button
+              _NavBarIcon(
+                icon: LucideIcons.settings,
+                isSelected: currentIndex == 1,
+                onTap: () => onTap(1),
+              ),
+            ],
           ),
-          _AddButton(onTap: onAddTap),
-          _NavBarIcon(
-            icon: LucideIcons.settings,
-            isSelected: currentIndex == 1,
-            onTap: () => onTap(1),
-          ),
-        ],
-      ),
+        ),
+        Positioned(
+          bottom: 56, // Adjusted to float more prominently on top
+          child: _AddButton(onTap: onAddTap),
+        ),
+      ],
     );
   }
 }
@@ -66,20 +77,21 @@ class _NavBarIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return GestureDetector(
       onTap: onTap,
       behavior: HitTestBehavior.opaque,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
-        padding: const EdgeInsets.all(12),
+        padding: const EdgeInsets.all(10), // Slightly reduced padding
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.canvasCream : Colors.transparent,
+          color: isSelected ? theme.colorScheme.primary : Colors.transparent,
           shape: BoxShape.circle,
         ),
         child: Icon(
           icon,
-          color: isSelected ? AppColors.inkBlack : AppColors.slateGray,
-          size: 24,
+          color: isSelected ? theme.colorScheme.onPrimary : theme.colorScheme.onSurface.withOpacity(0.4),
+          size: 20, // Reduced icon size
         ),
       ),
     );
@@ -100,6 +112,7 @@ class _AddButtonState extends State<_AddButton> with SingleTickerProviderStateMi
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     return MouseRegion(
       onEnter: (_) => setState(() => _isHovered = true),
       onExit: (_) => setState(() => _isHovered = false),
@@ -107,25 +120,23 @@ class _AddButtonState extends State<_AddButton> with SingleTickerProviderStateMi
         onTap: widget.onTap,
         child: AnimatedContainer(
           duration: const Duration(milliseconds: 200),
-          width: 56,
-          height: 56,
+          width: 52, // Slightly reduced width
+          height: 52, // Slightly reduced height
           decoration: BoxDecoration(
-            color: AppColors.inkBlack,
+            color: theme.colorScheme.primary,
             shape: BoxShape.circle,
-            boxShadow: _isHovered
-                ? [
-                    const BoxShadow(
-                      color: Color(0x26000000),
-                      blurRadius: 16,
-                      offset: Offset(0, 4),
-                    )
-                  ]
-                : [],
+            boxShadow: [
+              BoxShadow(
+                color: theme.colorScheme.primary.withOpacity(0.3),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+              )
+            ],
           ),
-          child: const Icon(
+          child: Icon(
             LucideIcons.plus,
-            color: AppColors.canvasCream,
-            size: 28,
+            color: theme.colorScheme.onPrimary,
+            size: 24, // Reduced icon size
           ),
         ).animate(target: _isHovered ? 1 : 0).scaleXY(end: 1.1, duration: 200.ms),
       ),

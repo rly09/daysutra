@@ -25,15 +25,20 @@ class FolderCard extends ConsumerWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  const Icon(LucideIcons.folder, color: AppColors.lightSignalOrange, size: 20),
-                  const SizedBox(width: 8),
-                  Text(
-                    'FOLDERS',
-                    style: Theme.of(context).textTheme.titleSmall,
-                  ),
-                ],
+              Expanded(
+                child: Row(
+                  children: [
+                    const Icon(LucideIcons.folder, color: AppColors.lightSignalOrange, size: 20),
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: Text(
+                        'FOLDERS',
+                        style: Theme.of(context).textTheme.titleSmall,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
               ),
               const Icon(LucideIcons.arrowRight, color: AppColors.slateGray, size: 16),
             ],

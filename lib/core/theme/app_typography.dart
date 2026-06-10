@@ -41,7 +41,8 @@ class AppTypography {
     ), // Eyebrow
     bodyLarge: GoogleFonts.sofiaSans(
       fontSize: 16,
-      fontWeight: FontWeight.w400, // Ideally 450, using 400 with tighter spacing
+      fontWeight:
+          FontWeight.w400, // Ideally 450, using 400 with tighter spacing
       height: 1.4, // 22.4px
       letterSpacing: -0.08, // Slightly tighter to simulate 450 weight
       color: AppColors.inkBlack,

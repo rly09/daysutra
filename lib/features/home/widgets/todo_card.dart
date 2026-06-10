@@ -25,15 +25,20 @@ class TodoCard extends ConsumerWidget {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Row(
-                children: [
-                  const Icon(LucideIcons.listTodo, color: AppColors.inkBlack, size: 20),
-                  const SizedBox(width: 8),
-                  Text(
-                    'TODO',
-                    style: Theme.of(context).textTheme.titleSmall,
-                  ),
-                ],
+              Expanded(
+                child: Row(
+                  children: [
+                    const Icon(LucideIcons.listTodo, color: AppColors.inkBlack, size: 20),
+                    const SizedBox(width: 8),
+                    Flexible(
+                      child: Text(
+                        'TODO',
+                        style: Theme.of(context).textTheme.titleSmall,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
               ),
               const Icon(LucideIcons.arrowRight, color: AppColors.slateGray, size: 16),
             ],
