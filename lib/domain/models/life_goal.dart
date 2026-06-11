@@ -17,11 +17,15 @@ class LifeGoal extends HiveObject {
   @HiveField(3)
   DateTime createdAt;
 
+  @HiveField(4)
+  String? inspirationImagePath;
+
   LifeGoal({
     String? id,
     required this.title,
     this.description = '',
     DateTime? createdAt,
+    this.inspirationImagePath,
   })  : id = id ?? const Uuid().v4(),
         createdAt = createdAt ?? DateTime.now();
 }

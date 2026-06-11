@@ -21,13 +21,14 @@ class LifeGoalAdapter extends TypeAdapter<LifeGoal> {
       title: fields[1] as String,
       description: fields[2] as String,
       createdAt: fields[3] as DateTime?,
+      inspirationImagePath: fields[4] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, LifeGoal obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(0)
       ..write(obj.id)
       ..writeByte(1)
@@ -35,7 +36,9 @@ class LifeGoalAdapter extends TypeAdapter<LifeGoal> {
       ..writeByte(2)
       ..write(obj.description)
       ..writeByte(3)
-      ..write(obj.createdAt);
+      ..write(obj.createdAt)
+      ..writeByte(4)
+      ..write(obj.inspirationImagePath);
   }
 
   @override

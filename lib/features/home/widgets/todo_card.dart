@@ -5,6 +5,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../presentation/widgets/glass_card.dart';
 import '../../../data/repositories/providers.dart';
 import '../../../core/theme/app_colors.dart';
+import '../../todo/todo_overview_dialog.dart';
 import '../../todo/todo_screen.dart';
 
 class TodoCard extends ConsumerWidget {
@@ -17,7 +18,20 @@ class TodoCard extends ConsumerWidget {
     return GlassCard(
       padding: const EdgeInsets.all(24),
       onTap: () {
-        Navigator.push(context, MaterialPageRoute(builder: (_) => const TodoScreen()));
+        showDialog(
+          context: context,
+          barrierColor: Theme.of(context).colorScheme.scrim.withValues(alpha: 0.35),
+          builder: (dialogContext) {
+            return TodoOverviewDialog(
+              onOpenTodoList: () {
+                Navigator.of(dialogContext, rootNavigator: true).pop();
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (_) => const TodoScreen()),
+                );
+              },
+            );
+          },
+        );
       },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -28,7 +42,7 @@ class TodoCard extends ConsumerWidget {
               Expanded(
                 child: Row(
                   children: [
-                    const Icon(LucideIcons.listTodo, color: AppColors.inkBlack, size: 20),
+                    const Icon(LucideIcons.listTodo, color: AppColors.signalOrange, size: 20),
                     const SizedBox(width: 8),
                     Flexible(
                       child: Text(

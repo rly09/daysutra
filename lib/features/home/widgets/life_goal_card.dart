@@ -15,7 +15,7 @@ class LifeGoalCard extends ConsumerWidget {
     final goalsAsync = ref.watch(goalsProvider);
 
     return GlassCard(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(16),
       onTap: () {
         showModalBottomSheet(
           context: context,

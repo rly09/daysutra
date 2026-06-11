@@ -5,6 +5,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../search/search_screen.dart';
 import 'life_goal_card.dart';
+import 'inspiration_card.dart';
 import 'todo_card.dart';
 import 'folder_card.dart';
 
@@ -20,10 +21,24 @@ class BentoGrid extends StatelessWidget {
             .fadeIn(duration: 500.ms, delay: 250.ms)
             .slideY(begin: 0.1, end: 0),
         const SizedBox(height: 16),
-        const SizedBox(
-          height: 200,
-          width: double.infinity,
-          child: LifeGoalCard(),
+        Row(
+          children: [
+            const Expanded(
+              flex: 3,
+              child: SizedBox(
+                height: 200,
+                child: LifeGoalCard(),
+              ),
+            ),
+            const SizedBox(width: 16),
+            const Expanded(
+              flex: 2,
+              child: SizedBox(
+                height: 200,
+                child: InspirationCard(),
+              ),
+            ),
+          ],
         ).animate().fadeIn(duration: 500.ms, delay: 300.ms).slideY(begin: 0.1, end: 0),
         const SizedBox(height: 16),
         Row(

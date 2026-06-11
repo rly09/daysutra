@@ -36,38 +36,73 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
 
       // Search Notes
       if (notesAsync.hasValue) {
-        final matches = notesAsync.value!.where((n) => n.title.toLowerCase().contains(queryLower) || n.content.toLowerCase().contains(queryLower)).toList();
+        final matches = notesAsync.value!
+            .where(
+              (n) =>
+                  n.title.toLowerCase().contains(queryLower) ||
+                  n.content.toLowerCase().contains(queryLower),
+            )
+            .toList();
         for (var n in matches) {
-          results.add(ListTile(
-            leading: const Icon(LucideIcons.fileText),
-            title: Text(n.title.isEmpty ? 'Untitled Note' : n.title),
-            subtitle: Text(n.content, maxLines: 1, overflow: TextOverflow.ellipsis),
-            onTap: () => Navigator.push(context, MaterialPageRoute(builder: (_) => NoteEditorScreen(existingNote: n))),
-          ));
+          results.add(
+            ListTile(
+              leading: const Icon(LucideIcons.fileText),
+              title: Text(n.title.isEmpty ? 'Untitled Note' : n.title),
+              subtitle: Text(
+                n.content,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+              ),
+              onTap: () => Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (_) => NoteEditorScreen(existingNote: n),
+                ),
+              ),
+            ),
+          );
         }
       }
 
       // Search Tasks
       if (tasksAsync.hasValue) {
-        final matches = tasksAsync.value!.where((t) => t.title.toLowerCase().contains(queryLower)).toList();
+        final matches = tasksAsync.value!
+            .where((t) => t.title.toLowerCase().contains(queryLower))
+            .toList();
         for (var t in matches) {
-          results.add(ListTile(
-            leading: const Icon(LucideIcons.checkSquare),
-            title: Text(t.title),
-            subtitle: const Text('Task'),
-          ));
+          results.add(
+            ListTile(
+              leading: const Icon(LucideIcons.checkSquare),
+              title: Text(t.title),
+              subtitle: Text(
+                t.priority == 2
+                    ? 'High priority'
+                    : t.priority == 0
+                    ? 'Low priority'
+                    : 'Medium priority',
+              ),
+            ),
+          );
         }
       }
 
       // Search Goals
       if (goalsAsync.hasValue) {
-        final matches = goalsAsync.value!.where((g) => g.title.toLowerCase().contains(queryLower) || g.description.toLowerCase().contains(queryLower)).toList();
+        final matches = goalsAsync.value!
+            .where(
+              (g) =>
+                  g.title.toLowerCase().contains(queryLower) ||
+                  g.description.toLowerCase().contains(queryLower),
+            )
+            .toList();
         for (var g in matches) {
-          results.add(ListTile(
-            leading: const Icon(LucideIcons.target),
-            title: Text(g.title),
-            subtitle: const Text('Life Goal'),
-          ));
+          results.add(
+            ListTile(
+              leading: const Icon(LucideIcons.target),
+              title: Text(g.title),
+              subtitle: const Text('Life Goal'),
+            ),
+          );
         }
       }
     }
@@ -103,17 +138,24 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  const Icon(LucideIcons.search, size: 64, color: AppColors.dustTaupe),
+                  const Icon(
+                    LucideIcons.search,
+                    size: 64,
+                    color: AppColors.dustTaupe,
+                  ),
                   const SizedBox(height: 16),
-                  Text('Search your second brain', style: Theme.of(context).textTheme.titleLarge?.copyWith(color: AppColors.slateGray)),
+                  Text(
+                    'Search your second brain',
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                      color: AppColors.slateGray,
+                    ),
+                  ),
                 ],
               ),
             )
           : results.isEmpty
-              ? const Center(child: Text('No results found.'))
-              : ListView(
-                  children: results,
-                ),
+          ? const Center(child: Text('No results found.'))
+          : ListView(children: results),
     );
   }
 }
