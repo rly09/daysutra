@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -18,17 +19,29 @@ class TodoCard extends ConsumerWidget {
     return GlassCard(
       padding: const EdgeInsets.all(24),
       onTap: () {
+        final tasks = tasksAsync.value ?? [];
+        
+        if (tasks.isEmpty) {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (_) => const TodoScreen()),
+          );
+          return;
+        }
+
         showDialog(
           context: context,
-          barrierColor: Theme.of(context).colorScheme.scrim.withValues(alpha: 0.35),
+          barrierColor: Colors.black.withValues(alpha: 0.2),
           builder: (dialogContext) {
-            return TodoOverviewDialog(
-              onOpenTodoList: () {
-                Navigator.of(dialogContext, rootNavigator: true).pop();
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (_) => const TodoScreen()),
-                );
-              },
+            return BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 10, sigmaY: 10),
+              child: TodoOverviewDialog(
+                onOpenTodoList: () {
+                  Navigator.of(dialogContext, rootNavigator: true).pop();
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (_) => const TodoScreen()),
+                  );
+                },
+              ),
             );
           },
         );

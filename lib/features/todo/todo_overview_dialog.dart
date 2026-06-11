@@ -1,3 +1,4 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
@@ -18,114 +19,154 @@ class TodoOverviewDialog extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final tasksAsync = ref.watch(tasksProvider);
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final colors = theme.colorScheme;
 
     return Dialog(
-      backgroundColor: colors.surface,
-      surfaceTintColor: colors.surface,
+      backgroundColor: Colors.transparent,
+      elevation: 0,
       insetPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(28),
-        side: BorderSide(color: colors.outlineVariant.withValues(alpha: 0.45)),
-      ),
       child: ConstrainedBox(
-        constraints: BoxConstraints(
-          maxWidth: 420,
-          maxHeight: MediaQuery.of(context).size.height * 0.75,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 20, 20, 16),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                children: [
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'To-Do',
-                          style: theme.textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        const SizedBox(height: 4),
-                        Text(
-                          'Tap a checkbox to mark progress.',
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: colors.onSurface.withValues(alpha: 0.65),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: onOpenTodoList,
-                    icon: Icon(LucideIcons.pencilLine, color: colors.primary),
-                    tooltip: 'Open to-do list',
-                  ),
-                  IconButton(
-                    onPressed: () => Navigator.of(context).pop(),
-                    icon: Icon(LucideIcons.x, color: colors.onSurface),
-                    tooltip: 'Close',
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Divider(
-                height: 1,
-                color: colors.outlineVariant.withValues(alpha: 0.45),
-              ),
-              const SizedBox(height: 12),
-              Flexible(
-                child: tasksAsync.when(
-                  data: (tasks) {
-                    if (tasks.isEmpty) {
-                      return Center(
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              LucideIcons.checkSquare,
-                              size: 44,
-                              color: colors.onSurface.withValues(alpha: 0.35),
-                            ),
-                            const SizedBox(height: 12),
-                            Text(
-                              'No tasks yet',
-                              style: theme.textTheme.titleMedium,
-                            ),
-                            const SizedBox(height: 6),
-                            Text(
-                              'Use the pencil icon to open the full list.',
-                              textAlign: TextAlign.center,
-                              style: theme.textTheme.bodySmall?.copyWith(
-                                color: colors.onSurface.withValues(alpha: 0.65),
-                              ),
-                            ),
-                          ],
-                        ),
-                      );
-                    }
-
-                    return ListView.separated(
-                      shrinkWrap: true,
-                      itemCount: tasks.length,
-                      separatorBuilder: (_, index) => const SizedBox(height: 10),
-                      itemBuilder: (context, index) {
-                        return _TodoTaskRow(
-                          task: tasks[index],
-                        );
-                      },
-                    );
-                  },
-                  loading: () => const Center(child: CircularProgressIndicator()),
-                  error: (e, _) => Center(child: Text('Error: $e')),
+        constraints: const BoxConstraints(maxWidth: 420),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(32),
+          child: BackdropFilter(
+            filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(32),
+                border: Border.all(
+                  color: (isDark ? Colors.white : AppColors.inkBlack).withValues(alpha: isDark ? 0.1 : 0.05),
+                  width: 1.5,
+                ),
+                gradient: LinearGradient(
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                  colors: [
+                    (isDark ? Colors.white : Colors.white).withValues(alpha: isDark ? 0.05 : 0.4),
+                    (isDark ? Colors.white : Colors.white).withValues(alpha: isDark ? 0.05 : 0.4),
+                  ],
                 ),
               ),
-            ],
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.of(context).size.height * 0.75,
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 24, 24, 20),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'To-Do',
+                                  style: theme.textTheme.titleLarge?.copyWith(
+                                    fontWeight: FontWeight.w700,
+                                    color: colors.onSurface,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  'Tap a checkbox to mark progress.',
+                                  style: theme.textTheme.bodySmall?.copyWith(
+                                    color: colors.onSurface.withValues(alpha: 0.6),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          IconButton(
+                            onPressed: onOpenTodoList,
+                            icon: Icon(LucideIcons.pencilLine, color: AppColors.signalOrange, size: 20),
+                            style: IconButton.styleFrom(
+                              backgroundColor: (isDark ? Colors.white : AppColors.inkBlack).withValues(alpha: 0.05),
+                            ),
+                            tooltip: 'Open to-do list',
+                          ),
+                          const SizedBox(width: 8),
+                          IconButton(
+                            onPressed: () => Navigator.of(context).pop(),
+                            icon: Icon(LucideIcons.x, color: colors.onSurface, size: 20),
+                            style: IconButton.styleFrom(
+                              backgroundColor: (isDark ? Colors.white : AppColors.inkBlack).withValues(alpha: 0.05),
+                            ),
+                            tooltip: 'Close',
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      Divider(
+                        height: 1,
+                        color: colors.onSurface.withValues(alpha: 0.1),
+                      ),
+                      const SizedBox(height: 16),
+                      Flexible(
+                        child: tasksAsync.when(
+                          data: (tasks) {
+                            if (tasks.isEmpty) {
+                              return Padding(
+                                padding: const EdgeInsets.symmetric(vertical: 32),
+                                child: Center(
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Icon(
+                                        LucideIcons.checkSquare,
+                                        size: 48,
+                                        color: colors.onSurface.withValues(alpha: 0.2),
+                                      ),
+                                      const SizedBox(height: 16),
+                                      Text(
+                                        'No tasks yet',
+                                        style: theme.textTheme.titleMedium,
+                                      ),
+                                      const SizedBox(height: 8),
+                                      Text(
+                                        'Use the pencil icon to open the full list.',
+                                        textAlign: TextAlign.center,
+                                        style: theme.textTheme.bodySmall?.copyWith(
+                                          color: colors.onSurface.withValues(alpha: 0.6),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              );
+                            }
+
+                            return ListView.separated(
+                              shrinkWrap: true,
+                              padding: EdgeInsets.zero,
+                              itemCount: tasks.length,
+                              separatorBuilder: (_, index) => const SizedBox(height: 12),
+                              itemBuilder: (context, index) {
+                                return _TodoTaskRow(
+                                  task: tasks[index],
+                                );
+                              },
+                            );
+                          },
+                          loading: () => const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 32),
+                            child: Center(child: CircularProgressIndicator()),
+                          ),
+                          error: (e, _) => Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 32),
+                            child: Center(child: Text('Error: $e')),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
           ),
         ),
       ),
@@ -143,48 +184,51 @@ class _TodoTaskRow extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
     final colors = theme.colorScheme;
 
-    return Material(
-      color: colors.surface,
-      borderRadius: BorderRadius.circular(18),
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(18),
-          border: Border(
-            left: BorderSide(
-              color: task.priority == 2
-                  ? Colors.red
-                  : task.priority == 0
-                      ? Colors.green
-                      : AppColors.lightSignalOrange,
-              width: 5,
-            ),
-          ),
-          color: colors.onSurface.withValues(alpha: theme.brightness == Brightness.dark ? 0.05 : 0.03),
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        color: (isDark ? Colors.white : AppColors.inkBlack).withValues(alpha: isDark ? 0.08 : 0.04),
+        border: Border.all(
+          color: (isDark ? Colors.white : AppColors.inkBlack).withValues(alpha: 0.05),
         ),
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(12, 6, 8, 6),
+      ),
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(20),
+        child: IntrinsicHeight(
           child: Row(
             children: [
+              Container(
+                width: 6,
+                color: task.priority == 2
+                    ? Colors.red.withValues(alpha: 0.8)
+                    : task.priority == 0
+                        ? Colors.green.withValues(alpha: 0.8)
+                        : AppColors.signalOrange.withValues(alpha: 0.8),
+              ),
+              const SizedBox(width: 4),
               Checkbox(
                 value: task.isCompleted,
+                activeColor: AppColors.signalOrange,
+                side: BorderSide(color: colors.onSurface.withValues(alpha: 0.3)),
                 onChanged: (value) async {
                   task.isCompleted = value ?? false;
                   await task.save();
                 },
               ),
-              const SizedBox(width: 8),
               Expanded(
-                child: Text(
-                  task.title,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    decoration: task.isCompleted ? TextDecoration.lineThrough : null,
-                    color: task.isCompleted
-                        ? colors.onSurface.withValues(alpha: 0.6)
-                        : colors.onSurface,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+                  child: Text(
+                    task.title,
+                    style: theme.textTheme.bodyMedium?.copyWith(
+                      decoration: task.isCompleted ? TextDecoration.lineThrough : null,
+                      color: task.isCompleted
+                          ? colors.onSurface.withValues(alpha: 0.5)
+                          : colors.onSurface,
+                    ),
                   ),
                 ),
               ),

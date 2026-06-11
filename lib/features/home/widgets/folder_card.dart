@@ -50,8 +50,10 @@ class FolderCard extends ConsumerWidget {
                 if (folders.isEmpty) {
                   return Center(
                     child: Text(
-                      'No folders yet',
-                      style: Theme.of(context).textTheme.bodyMedium,
+                      '+ Add Folder',
+                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            color: AppColors.slateGray,
+                          ),
                     ),
                   );
                 }
