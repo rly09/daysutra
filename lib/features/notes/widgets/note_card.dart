@@ -19,8 +19,31 @@ class NoteCard extends StatelessWidget {
           ),
         );
       },
+      onLongPress: () {
+        showDialog(
+          context: context,
+          builder: (context) => AlertDialog(
+            title: const Text('Delete Note'),
+            content: const Text('Are you sure you want to delete this note?'),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.pop(context),
+                child: const Text('Cancel'),
+              ),
+              TextButton(
+                onPressed: () {
+                  note.delete();
+                  Navigator.pop(context);
+                },
+                child: const Text('Delete', style: TextStyle(color: Colors.red)),
+              ),
+            ],
+          ),
+        );
+      },
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           Text(
             note.title.isNotEmpty ? note.title : 'Untitled',
@@ -29,13 +52,11 @@ class NoteCard extends StatelessWidget {
             overflow: TextOverflow.ellipsis,
           ),
           const SizedBox(height: 8),
-          Expanded(
-            child: Text(
-              note.content,
-              style: Theme.of(context).textTheme.bodyMedium,
-              maxLines: 4,
-              overflow: TextOverflow.ellipsis,
-            ),
+          Text(
+            note.content,
+            style: Theme.of(context).textTheme.bodyMedium,
+            maxLines: 10, // Increased max lines for responsiveness
+            overflow: TextOverflow.ellipsis,
           ),
         ],
       ),

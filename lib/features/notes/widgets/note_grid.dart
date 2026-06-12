@@ -14,22 +14,17 @@ class NoteGrid extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.only(bottom: 16),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
                   flex: (i % 4 == 0) ? 3 : 2,
-                  child: SizedBox(
-                    height: 200,
-                    child: NoteCard(note: notes[i]),
-                  ),
+                  child: NoteCard(note: notes[i]),
                 ),
                 const SizedBox(width: 16),
                 if (i + 1 < notes.length)
                   Expanded(
                     flex: (i % 4 == 0) ? 2 : 3,
-                    child: SizedBox(
-                      height: 200,
-                      child: NoteCard(note: notes[i + 1]),
-                    ),
+                    child: NoteCard(note: notes[i + 1]),
                   )
                 else
                   Expanded(

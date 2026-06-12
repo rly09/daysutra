@@ -64,21 +64,13 @@ class _HomeScreenState extends State<HomeScreen> {
                             return Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const SizedBox(height: 48),
-                                Text(
-                                  'QUICK NOTES',
-                                  style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                                    color: AppColors.signalOrange,
-                                    letterSpacing: 2,
-                                  ),
-                                ).animate().fadeIn(duration: 400.ms).slideX(begin: -0.2, end: 0),
                                 const SizedBox(height: 24),
                                 NoteGrid(notes: notes),
                               ],
                             );
                           },
                           loading: () => const SizedBox.shrink(),
-                          error: (_, __) => const SizedBox.shrink(),
+                          error: (e, st) => const SizedBox.shrink(),
                         ),
                       ],
                     );

@@ -130,7 +130,7 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
                 );
               },
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (_, __) => const Text('Error loading folders'),
+              error: (e, st) => const Text('Error loading folders'),
             ),
           ],
         ),
@@ -162,19 +162,34 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
           onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
-          IconButton(
-            icon: Icon(
-              LucideIcons.star,
-              color: _currentNote.isFavorite ? AppColors.signalOrange : AppColors.slateGray.withValues(alpha: 0.4),
+          if (widget.existingNote != null)
+            IconButton(
+              icon: const Icon(LucideIcons.trash2, color: AppColors.dustTaupe),
+              onPressed: () {
+                showDialog(
+                  context: context,
+                  builder: (context) => AlertDialog(
+                    title: const Text('Delete Note'),
+                    content: const Text('Are you sure you want to delete this note?'),
+                    actions: [
+                      TextButton(
+                        onPressed: () => Navigator.pop(context),
+                        child: const Text('Cancel'),
+                      ),
+                      TextButton(
+                        onPressed: () {
+                          widget.existingNote!.delete();
+                          Navigator.pop(context); // Pop dialog
+                          Navigator.pop(context); // Pop editor
+                          AppFeedback.showSuccessSnackBar(context, 'Note deleted');
+                        },
+                        child: const Text('Delete', style: TextStyle(color: Colors.red)),
+                      ),
+                    ],
+                  ),
+                );
+              },
             ),
-            onPressed: () {
-              setState(() {
-                _currentNote.isFavorite = !_currentNote.isFavorite;
-                if (_currentNote.isInBox) _currentNote.save();
-              });
-            },
-          ),
-          const SizedBox(width: 8),
           Padding(
             padding: const EdgeInsets.only(right: 16.0),
             child: PillButton(
