@@ -5,8 +5,8 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../domain/models/folder.dart';
 import '../../data/repositories/providers.dart';
 import '../../core/theme/app_colors.dart';
-import '../../presentation/widgets/simple_card.dart';
 import '../notes/note_editor_screen.dart';
+import '../notes/widgets/note_grid.dart';
 
 class FolderDetailsScreen extends ConsumerWidget {
   final Folder folder;
@@ -48,33 +48,11 @@ class FolderDetailsScreen extends ConsumerWidget {
             );
           }
 
-          return ListView.builder(
+          return ListView(
             padding: const EdgeInsets.all(24),
-            itemCount: folderNotes.length,
-            itemBuilder: (context, index) {
-              final note = folderNotes[index];
-              return SimpleCard(
-                onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => NoteEditorScreen(existingNote: note)));
-                },
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      note.title.isNotEmpty ? note.title : 'Untitled',
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      note.content,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              );
-            },
+            children: [
+              NoteGrid(notes: folderNotes),
+            ],
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),

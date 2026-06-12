@@ -62,6 +62,13 @@ final foldersProvider = StreamProvider<List<Folder>>((ref) {
       .startWith(box.values.toList());
 });
 
+final unfiledNotesProvider = Provider<AsyncValue<List<Note>>>((ref) {
+  final notesAsync = ref.watch(notesProvider);
+  return notesAsync.whenData((notes) => 
+    notes.where((n) => n.folderId == null || n.folderId!.isEmpty).toList()
+  );
+});
+
 extension StreamExt<T> on Stream<T> {
   Stream<T> startWith(T value) async* {
     yield value;

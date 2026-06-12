@@ -4,8 +4,8 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 
 import '../../data/repositories/providers.dart';
 import '../../core/theme/app_colors.dart';
-import '../../presentation/widgets/simple_card.dart';
 import 'note_editor_screen.dart';
+import 'widgets/note_grid.dart';
 
 class NotesScreen extends ConsumerWidget {
   const NotesScreen({super.key});
@@ -42,44 +42,11 @@ class NotesScreen extends ConsumerWidget {
             );
           }
 
-          return ListView.builder(
+          return ListView(
             padding: const EdgeInsets.all(24),
-            itemCount: notes.length,
-            itemBuilder: (context, index) {
-              final note = notes[index];
-              return SimpleCard(
-                onTap: () {
-                  Navigator.push(context, MaterialPageRoute(builder: (_) => NoteEditorScreen(existingNote: note)));
-                },
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Expanded(
-                          child: Text(
-                            note.title.isNotEmpty ? note.title : 'Untitled',
-                            style: Theme.of(context).textTheme.titleMedium,
-                            maxLines: 1,
-                            overflow: TextOverflow.ellipsis,
-                          ),
-                        ),
-                        if (note.isFavorite)
-                          const Icon(Icons.star, color: Colors.orange, size: 16),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    Text(
-                      note.content,
-                      style: Theme.of(context).textTheme.bodyMedium,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ],
-                ),
-              );
-            },
+            children: [
+              NoteGrid(notes: notes),
+            ],
           );
         },
         loading: () => const Center(child: CircularProgressIndicator()),
