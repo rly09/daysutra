@@ -4,12 +4,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/theme_mode_provider.dart';
 import 'data/repositories/hive_repository.dart';
+import 'core/utils/daily_refresh_manager.dart';
 import 'features/home/home_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   
   await HiveRepository.init();
+  await DailyRefreshManager.checkAndRefreshTasks();
 
   runApp(
     const ProviderScope(

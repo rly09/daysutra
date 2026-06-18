@@ -14,37 +14,38 @@ class LifeGoalCard extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final goalsAsync = ref.watch(goalsProvider);
 
-    return GlassCard(
-      padding: const EdgeInsets.all(16),
-      onTap: () {
-        showModalBottomSheet(
-          context: context,
-          isScrollControlled: true,
-          backgroundColor: Colors.transparent,
-          elevation: 0,
-          builder: (_) => GoalModal(
-            existingGoal: goalsAsync.valueOrNull?.isNotEmpty == true 
-                ? goalsAsync.value!.first 
-                : null,
-          ),
-        );
-      },
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Icon(LucideIcons.target, color: AppColors.signalOrange, size: 20),
-              const SizedBox(width: 8),
-              Text(
-                'LIFE GOAL',
-                style: Theme.of(context).textTheme.titleSmall,
-              ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          Expanded(
-            child: goalsAsync.when(
+    return ConstrainedBox(
+      constraints: const BoxConstraints(minHeight: 200),
+      child: GlassCard(
+        padding: const EdgeInsets.all(16),
+        onTap: () {
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            builder: (_) => GoalModal(
+              existingGoal: goalsAsync.valueOrNull?.isNotEmpty == true 
+                  ? goalsAsync.value!.first 
+                  : null,
+            ),
+          );
+        },
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const Icon(LucideIcons.target, color: AppColors.signalOrange, size: 20),
+                const SizedBox(width: 8),
+                Text(
+                  'LIFE GOAL',
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            goalsAsync.when(
               data: (goals) {
                 if (goals.isEmpty) {
                   return Center(
@@ -63,26 +64,22 @@ class LifeGoalCard extends ConsumerWidget {
                     Text(
                       goal.title,
                       style: Theme.of(context).textTheme.titleLarge,
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
                     ),
-                    const SizedBox(height: 8),
-                    Expanded(
-                      child: Text(
+                    if (goal.description.isNotEmpty) ...[
+                      const SizedBox(height: 8),
+                      Text(
                         goal.description,
                         style: Theme.of(context).textTheme.bodyMedium,
-                        maxLines: 3,
-                        overflow: TextOverflow.ellipsis,
                       ),
-                    ),
+                    ],
                   ],
                 );
               },
               loading: () => const Center(child: CircularProgressIndicator()),
               error: (e, st) => Text('Error: $e'),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

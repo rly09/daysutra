@@ -9,6 +9,7 @@ class HiveRepository {
   static const String notesBoxName = 'notesBox';
   static const String tasksBoxName = 'tasksBox';
   static const String goalsBoxName = 'goalsBox';
+  static const String settingsBoxName = 'settingsBox';
 
   static Future<void> init() async {
     await Hive.initFlutter();
@@ -24,6 +25,7 @@ class HiveRepository {
     await Hive.openBox<Note>(notesBoxName);
     await Hive.openBox<TodoTask>(tasksBoxName);
     await Hive.openBox<LifeGoal>(goalsBoxName);
+    await Hive.openBox(settingsBoxName);
   }
 
   // Generic methods

@@ -162,102 +162,105 @@ class InspirationCard extends ConsumerWidget {
         final goal = goals.isNotEmpty ? goals.first : null;
         final imagePath = goal?.inspirationImagePath;
 
-        return GlassCard(
-          padding: EdgeInsets.zero,
-          onTap: imagePath != null 
-              ? () => _showPreview(context, imagePath, ref, goal)
-              : () => _pickAndCropImage(context, ref, goal),
-          child: Stack(
-            children: [
-              // Background Image
-              if (imagePath != null)
-                Positioned.fill(
-                  child: ClipRRect(
-                    borderRadius: BorderRadius.circular(40),
-                    child: Image.file(
-                      File(imagePath),
-                      fit: BoxFit.cover,
-                    ),
-                  ),
-                ),
-              
-              // Gradient Overlay (if image exists) to keep text readable
-              if (imagePath != null)
-                Positioned.fill(
-                  child: Container(
-                    decoration: BoxDecoration(
+        return ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 200),
+          child: GlassCard(
+            padding: EdgeInsets.zero,
+            onTap: imagePath != null 
+                ? () => _showPreview(context, imagePath, ref, goal)
+                : () => _pickAndCropImage(context, ref, goal),
+            child: Stack(
+              children: [
+                // Background Image
+                if (imagePath != null)
+                  Positioned.fill(
+                    child: ClipRRect(
                       borderRadius: BorderRadius.circular(40),
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [
-                          Colors.black.withValues(alpha: 0.4),
-                          Colors.transparent,
-                          Colors.black.withValues(alpha: 0.2),
-                        ],
+                      child: Image.file(
+                        File(imagePath),
+                        fit: BoxFit.cover,
                       ),
                     ),
                   ),
-                ),
+                
+                // Gradient Overlay (if image exists) to keep text readable
+                if (imagePath != null)
+                  Positioned.fill(
+                    child: Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(40),
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                          colors: [
+                            Colors.black.withValues(alpha: 0.4),
+                            Colors.transparent,
+                            Colors.black.withValues(alpha: 0.2),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
 
-              // Content
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: Column(
-                  children: [
-                    if (imagePath == null)
-                      Row(
-                        children: [
-                          const Icon(
-                            LucideIcons.sparkles, 
-                            color: AppColors.signalOrange, 
-                            size: 16,
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: Text(
-                              'INSPIRATION',
-                              style: theme.textTheme.labelSmall?.copyWith(
-                                letterSpacing: 1.2,
-                                fontWeight: FontWeight.bold,
-                                color: AppColors.slateGray,
+                // Content
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    children: [
+                      if (imagePath == null)
+                        Row(
+                          children: [
+                            const Icon(
+                              LucideIcons.sparkles, 
+                              color: AppColors.signalOrange, 
+                              size: 16,
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                'INSPIRATION',
+                                style: theme.textTheme.labelSmall?.copyWith(
+                                  letterSpacing: 1.2,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.slateGray,
+                                ),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
                               ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ],
+                        ),
+                      const Spacer(),
+                      if (imagePath == null)
+                        const Center(
+                          child: Icon(
+                            LucideIcons.plus,
+                            color: AppColors.dustTaupe,
+                            size: 32,
+                          ),
+                        ),
+                      if (imagePath != null)
+                        Align(
+                          alignment: Alignment.bottomRight,
+                          child: Container(
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(
+                              color: Colors.white.withValues(alpha: 0.2),
+                              shape: BoxShape.circle,
+                            ),
+                            child: const Icon(
+                              LucideIcons.maximize2,
+                              size: 14,
+                              color: Colors.white,
                             ),
                           ),
-                        ],
-                      ),
-                    const Spacer(),
-                    if (imagePath == null)
-                      const Center(
-                        child: Icon(
-                          LucideIcons.plus,
-                          color: AppColors.dustTaupe,
-                          size: 32,
                         ),
-                      ),
-                    if (imagePath != null)
-                      Align(
-                        alignment: Alignment.bottomRight,
-                        child: Container(
-                          padding: const EdgeInsets.all(6),
-                          decoration: BoxDecoration(
-                            color: Colors.white.withValues(alpha: 0.2),
-                            shape: BoxShape.circle,
-                          ),
-                          child: const Icon(
-                            LucideIcons.maximize2,
-                            size: 14,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                    const Spacer(),
-                  ],
+                      const Spacer(),
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         );
       },

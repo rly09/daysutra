@@ -21,24 +21,21 @@ class BentoGrid extends StatelessWidget {
             .fadeIn(duration: 500.ms, delay: 250.ms)
             .slideY(begin: 0.1, end: 0),
         const SizedBox(height: 16),
-        Row(
-          children: [
-            const Expanded(
-              flex: 3,
-              child: SizedBox(
-                height: 200,
+        IntrinsicHeight(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              const Expanded(
+                flex: 3,
                 child: LifeGoalCard(),
               ),
-            ),
-            const SizedBox(width: 16),
-            const Expanded(
-              flex: 2,
-              child: SizedBox(
-                height: 200,
+              const SizedBox(width: 16),
+              const Expanded(
+                flex: 2,
                 child: InspirationCard(),
               ),
-            ),
-          ],
+            ],
+          ),
         ).animate().fadeIn(duration: 500.ms, delay: 300.ms).slideY(begin: 0.1, end: 0),
         const SizedBox(height: 16),
         Row(
