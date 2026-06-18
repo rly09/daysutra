@@ -5,6 +5,8 @@ import 'core/theme/app_theme.dart';
 import 'core/theme/theme_mode_provider.dart';
 import 'data/repositories/hive_repository.dart';
 import 'core/utils/daily_refresh_manager.dart';
+import 'core/utils/notification_service.dart';
+import 'core/utils/background_task_service.dart';
 import 'features/home/home_screen.dart';
 
 void main() async {
@@ -12,6 +14,14 @@ void main() async {
   
   await HiveRepository.init();
   await DailyRefreshManager.checkAndRefreshTasks();
+  
+  // Initialize Notifications
+  final notificationService = NotificationService();
+  await notificationService.init();
+
+  // Initialize Background Tasks
+  BackgroundTaskService.init();
+  BackgroundTaskService.scheduleTasks();
 
   runApp(
     const ProviderScope(

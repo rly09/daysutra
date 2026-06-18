@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_animate/flutter_animate.dart';
+import 'package:confetti/confetti.dart';
 
 import '../../presentation/widgets/floating_nav_bar.dart';
 import 'widgets/bento_grid.dart';
@@ -11,15 +12,29 @@ import '../settings/settings_screen.dart';
 import '../../data/repositories/providers.dart';
 import '../../core/theme/app_colors.dart';
 
-class HomeScreen extends StatefulWidget {
+class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  ConsumerState<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends ConsumerState<HomeScreen> {
   int _currentIndex = 0;
+  late ConfettiController _confettiController;
+  bool _allTasksCompletedPreviously = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _confettiController = ConfettiController(duration: const Duration(seconds: 3));
+  }
+
+  @override
+  void dispose() {
+    _confettiController.dispose();
+    super.dispose();
+  }
 
   void _onNavTap(int index) {
     setState(() {
@@ -36,6 +51,23 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Listen to tasks completion for confetti
+    ref.listen(tasksProvider, (previous, next) {
+      final tasks = next.valueOrNull ?? [];
+      if (tasks.isNotEmpty) {
+        final allCompleted = tasks.every((t) => t.isCompleted);
+        
+        // Trigger only if state changed from not-all-completed to all-completed
+        if (allCompleted && !_allTasksCompletedPreviously) {
+          _confettiController.play();
+        }
+        _allTasksCompletedPreviously = allCompleted;
+      } else {
+        // If list is empty, reset the state
+        _allTasksCompletedPreviously = false;
+      }
+    });
+
     return Scaffold(
       body: Stack(
         children: [
@@ -81,6 +113,29 @@ class _HomeScreenState extends State<HomeScreen> {
               const SettingsScreen(),
             ],
           ),
+
+          // Confetti overlay
+          Align(
+            alignment: Alignment.topCenter,
+            child: ConfettiWidget(
+              confettiController: _confettiController,
+              blastDirectionality: BlastDirectionality.explosive,
+              shouldLoop: false,
+              emissionFrequency: 0.1, // Increased frequency
+              numberOfParticles: 20,  // More particles per emission
+              gravity: 0.1,
+              colors: const [
+                AppColors.signalOrange,
+                Colors.blue,
+                Colors.pink,
+                Colors.orange,
+                Colors.purple,
+                Colors.yellow,
+                Colors.green,
+              ],
+            ),
+          ),
+
           // Floating Nav Bar
           Align(
             alignment: Alignment.bottomCenter,
