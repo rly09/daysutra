@@ -8,6 +8,8 @@ import 'core/utils/daily_refresh_manager.dart';
 import 'core/utils/notification_service.dart';
 import 'core/utils/background_task_service.dart';
 import 'features/home/home_screen.dart';
+import 'data/repositories/providers.dart';
+import 'core/services/home_widget_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,6 +38,49 @@ class DaySutraApp extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeModeProvider);
+    ref.watch(isDarkProvider);
+
+    // Synchronize isDarkProvider with actual media query system brightness changes
+    final systemBrightness = MediaQuery.platformBrightnessOf(context);
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final currentIsDark = themeMode == ThemeMode.dark ||
+          (themeMode == ThemeMode.system && systemBrightness == Brightness.dark);
+      if (ref.read(isDarkProvider) != currentIsDark) {
+        ref.read(isDarkProvider.notifier).state = currentIsDark;
+      }
+    });
+
+    // Watch and listen to providers to update home screen widgets in real time
+    ref.listen(isDarkProvider, (previous, next) {
+      final goals = ref.read(goalsProvider).valueOrNull ?? [];
+      final goal = goals.isNotEmpty ? goals.first : null;
+      final folders = ref.read(foldersProvider).valueOrNull ?? [];
+      final tasks = ref.read(tasksProvider).valueOrNull ?? [];
+      
+      HomeWidgetManager.updateAllWidgets(
+        goal: goal,
+        folders: folders,
+        tasks: tasks,
+        isDark: next,
+      );
+    });
+
+    ref.listen(goalsProvider, (previous, next) {
+      final goals = next.valueOrNull ?? [];
+      final goal = goals.isNotEmpty ? goals.first : null;
+      HomeWidgetManager.updateLifeGoalWidget(goal, isDark: ref.read(isDarkProvider));
+      HomeWidgetManager.updateInspirationWidget(goal, isDark: ref.read(isDarkProvider));
+    });
+
+    ref.listen(foldersProvider, (previous, next) {
+      final folders = next.valueOrNull ?? [];
+      HomeWidgetManager.updateFoldersWidget(folders, isDark: ref.read(isDarkProvider));
+    });
+
+    ref.listen(tasksProvider, (previous, next) {
+      final tasks = next.valueOrNull ?? [];
+      HomeWidgetManager.updateTodoWidget(tasks, isDark: ref.read(isDarkProvider));
+    });
 
     return MaterialApp(
       title: 'DaySūtra',

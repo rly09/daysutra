@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="life_goal_widget_label">Life Goal</string>
+    <string name="life_goal_widget_description">Displays your current life goal on the home screen.</string>
+
+    <string name="inspiration_widget_label">Inspiration</string>
+    <string name="inspiration_widget_description">Displays your daily inspiration image and quote.</string>
+
+    <string name="folders_widget_label">Folders</string>
+    <string name="folders_widget_description">Quick access to your notes folders from the home screen.</string>
+
+    <string name="todo_widget_label">Todo</string>
+    <string name="todo_widget_description">Displays your progress on today\'s tasks.</string>
+</resources>

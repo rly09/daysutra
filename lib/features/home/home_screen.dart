@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_animate/flutter_animate.dart';
 import 'package:confetti/confetti.dart';
+
+import 'package:home_widget/home_widget.dart';
 
 import '../../presentation/widgets/floating_nav_bar.dart';
 import 'widgets/bento_grid.dart';
@@ -28,6 +29,29 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   void initState() {
     super.initState();
     _confettiController = ConfettiController(duration: const Duration(seconds: 3));
+    _initHomeWidget();
+  }
+
+  void _initHomeWidget() {
+    // Check if the app was launched by a home widget click
+    HomeWidget.initiallyLaunchedFromHomeWidget().then((uri) {
+      if (uri != null) {
+        _handleHomeWidgetClick(uri);
+      }
+    });
+
+    // Listen to widget clicks when the app is in background/foreground
+    HomeWidget.widgetClicked.listen((uri) {
+      if (uri != null) {
+        _handleHomeWidgetClick(uri);
+      }
+    });
+  }
+
+  void _handleHomeWidgetClick(Uri uri) {
+    debugPrint('Launched or clicked from HomeWidget: $uri');
+    // Standard redirection is handled by the OS opening/resuming the app.
+    // If specific navigation is required in the future, it can be routed here.
   }
 
   @override
