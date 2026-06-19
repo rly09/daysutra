@@ -19,7 +19,7 @@ class HomeWidgetRenderViews {
         child: Container(
           width: 360,
           height: 220,
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           decoration: const BoxDecoration(
             color: Colors.transparent,
           ),
@@ -42,13 +42,13 @@ class HomeWidgetRenderViews {
                   ),
                 ],
               ),
-              const SizedBox(height: 18),
+              const SizedBox(height: 12),
               Expanded(
                 child: FittedBox(
                   fit: BoxFit.scaleDown,
                   alignment: Alignment.centerLeft,
                   child: SizedBox(
-                    width: 312,
+                    width: 328,
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -58,18 +58,18 @@ class HomeWidgetRenderViews {
                           title.isNotEmpty ? title : 'No Life Goal Set',
                           style: TextStyle(
                             fontFamily: GoogleFonts.sofiaSans().fontFamily,
-                            fontSize: 24,
+                            fontSize: 28,
                             fontWeight: FontWeight.w500,
                             color: isDark ? AppColors.canvasCream : AppColors.inkBlack,
                           ),
                         ),
                         if (description.isNotEmpty) ...[
-                          const SizedBox(height: 8),
+                          const SizedBox(height: 6),
                           Text(
                             description,
                             style: TextStyle(
                               fontFamily: GoogleFonts.sofiaSans().fontFamily,
-                              fontSize: 15,
+                              fontSize: 18,
                               height: 1.4,
                               color: isDark ? AppColors.dustTaupe : AppColors.slateGray,
                             ),
@@ -134,18 +134,18 @@ class HomeWidgetRenderViews {
                         ],
                       ),
                     ),
-                    padding: const EdgeInsets.all(24),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                     child: Column(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        const Icon(LucideIcons.sparkles, color: Colors.white, size: 36),
+                        const Icon(LucideIcons.sparkles, color: Colors.white, size: 40),
                         const SizedBox(height: 16),
                         Text(
                           'Be the change you wish to see in the world.',
                           textAlign: TextAlign.center,
                           style: TextStyle(
                             fontFamily: GoogleFonts.sofiaSans().fontFamily,
-                            fontSize: 16,
+                            fontSize: 18,
                             fontWeight: FontWeight.w500,
                             height: 1.4,
                             color: Colors.white,
@@ -174,19 +174,19 @@ class HomeWidgetRenderViews {
                 ),
               if (hasImage)
                 Padding(
-                  padding: const EdgeInsets.all(24.0),
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Row(
                         children: [
-                          const Icon(LucideIcons.sparkles, color: Colors.white, size: 18),
+                          const Icon(LucideIcons.sparkles, color: Colors.white, size: 20),
                           const SizedBox(width: 8),
                           Text(
                             'INSPIRATION',
                             style: TextStyle(
                               fontFamily: GoogleFonts.sofiaSans().fontFamily,
-                              fontSize: 12,
+                              fontSize: 14,
                               fontWeight: FontWeight.bold,
                               letterSpacing: 1.2,
                               color: Colors.white.withValues(alpha: 0.9),
@@ -215,7 +215,7 @@ class HomeWidgetRenderViews {
         child: Container(
           width: 360,
           height: 180,
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           decoration: const BoxDecoration(
             color: Colors.transparent,
           ),
@@ -224,13 +224,13 @@ class HomeWidgetRenderViews {
             children: [
               Row(
                 children: [
-                  const Icon(LucideIcons.folder, color: AppColors.lightSignalOrange, size: 20),
+                  const Icon(LucideIcons.folder, color: AppColors.lightSignalOrange, size: 22),
                   const SizedBox(width: 8),
                   Text(
                     'FOLDERS',
                     style: TextStyle(
                       fontFamily: GoogleFonts.sofiaSans().fontFamily,
-                      fontSize: 13,
+                      fontSize: 15,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 1.2,
                       color: AppColors.slateGray,
@@ -238,7 +238,7 @@ class HomeWidgetRenderViews {
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
               Expanded(
                 child: folders.isEmpty
                     ? Center(
@@ -246,7 +246,7 @@ class HomeWidgetRenderViews {
                           'No Folders',
                           style: TextStyle(
                             fontFamily: GoogleFonts.sofiaSans().fontFamily,
-                            fontSize: 16,
+                            fontSize: 18,
                             color: AppColors.slateGray,
                           ),
                         ),
@@ -255,10 +255,10 @@ class HomeWidgetRenderViews {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: folders.take(2).map((folder) {
                           return Padding(
-                            padding: const EdgeInsets.only(bottom: 10.0),
+                            padding: const EdgeInsets.only(bottom: 12.0),
                             child: Row(
                               children: [
-                                const Icon(LucideIcons.folder, size: 16, color: AppColors.slateGray),
+                                const Icon(LucideIcons.folder, size: 20, color: AppColors.slateGray),
                                 const SizedBox(width: 8),
                                 Expanded(
                                   child: Text(
@@ -267,7 +267,7 @@ class HomeWidgetRenderViews {
                                     overflow: TextOverflow.ellipsis,
                                     style: TextStyle(
                                       fontFamily: GoogleFonts.sofiaSans().fontFamily,
-                                      fontSize: 16,
+                                      fontSize: 18,
                                       color: isDark ? AppColors.canvasCream : AppColors.inkBlack,
                                     ),
                                   ),
@@ -300,7 +300,7 @@ class HomeWidgetRenderViews {
         child: Container(
           width: 360,
           height: 180,
-          padding: const EdgeInsets.all(24),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
           decoration: const BoxDecoration(
             color: Colors.transparent,
           ),
@@ -309,13 +309,13 @@ class HomeWidgetRenderViews {
             children: [
               Row(
                 children: [
-                  const Icon(LucideIcons.listTodo, color: AppColors.signalOrange, size: 20),
+                  const Icon(LucideIcons.listTodo, color: AppColors.signalOrange, size: 22),
                   const SizedBox(width: 8),
                   Text(
                     'TODO',
                     style: TextStyle(
                       fontFamily: GoogleFonts.sofiaSans().fontFamily,
-                      fontSize: 13,
+                      fontSize: 15,
                       fontWeight: FontWeight.bold,
                       letterSpacing: 1.2,
                       color: AppColors.slateGray,
@@ -323,7 +323,7 @@ class HomeWidgetRenderViews {
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 8),
               Expanded(
                 child: total == 0
                     ? Center(
@@ -331,7 +331,7 @@ class HomeWidgetRenderViews {
                           'No Tasks',
                           style: TextStyle(
                             fontFamily: GoogleFonts.sofiaSans().fontFamily,
-                            fontSize: 16,
+                            fontSize: 18,
                             color: AppColors.slateGray,
                           ),
                         ),
@@ -343,11 +343,11 @@ class HomeWidgetRenderViews {
                             alignment: Alignment.center,
                             children: [
                               SizedBox(
-                                width: 72,
-                                height: 72,
+                                width: 80,
+                                height: 80,
                                 child: CircularProgressIndicator(
                                   value: progress,
-                                  strokeWidth: 7,
+                                  strokeWidth: 8,
                                   backgroundColor: isDark ? AppColors.charcoal : AppColors.softBone,
                                   color: AppColors.signalOrange,
                                 ),
@@ -356,14 +356,14 @@ class HomeWidgetRenderViews {
                                 '$completed/$total',
                                 style: TextStyle(
                                   fontFamily: GoogleFonts.sofiaSans().fontFamily,
-                                  fontSize: 16,
+                                  fontSize: 18,
                                   fontWeight: FontWeight.bold,
                                   color: isDark ? AppColors.canvasCream : AppColors.inkBlack,
                                 ),
                               ),
                             ],
                           ),
-                          const SizedBox(width: 32),
+                          const SizedBox(width: 24),
                           Column(
                             mainAxisAlignment: MainAxisAlignment.center,
                             crossAxisAlignment: CrossAxisAlignment.start,
@@ -372,7 +372,7 @@ class HomeWidgetRenderViews {
                                 'Progress',
                                 style: TextStyle(
                                   fontFamily: GoogleFonts.sofiaSans().fontFamily,
-                                  fontSize: 18,
+                                  fontSize: 20,
                                   fontWeight: FontWeight.bold,
                                   color: isDark ? AppColors.canvasCream : AppColors.inkBlack,
                                 ),
@@ -382,7 +382,7 @@ class HomeWidgetRenderViews {
                                 'tasks completed',
                                 style: TextStyle(
                                   fontFamily: GoogleFonts.sofiaSans().fontFamily,
-                                  fontSize: 13,
+                                  fontSize: 14,
                                   color: AppColors.slateGray,
                                 ),
                               ),
