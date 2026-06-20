@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tz_data;
@@ -26,7 +27,7 @@ class NotificationService {
     tz_data.initializeTimeZones();
     
     const AndroidInitializationSettings initializationSettingsAndroid =
-        AndroidInitializationSettings('@mipmap/ic_launcher');
+        AndroidInitializationSettings('@mipmap/launcher_icon');
 
     const DarwinInitializationSettings initializationSettingsIOS = DarwinInitializationSettings(
       requestAlertPermission: true,
@@ -42,6 +43,25 @@ class NotificationService {
     await _notificationsPlugin.initialize(
       settings: initializationSettings,
     );
+
+    await requestPermission();
+  }
+
+  Future<bool> requestPermission() async {
+    if (Platform.isAndroid) {
+      final androidPlugin = _notificationsPlugin
+          .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+      return await androidPlugin?.requestNotificationsPermission() ?? false;
+    } else if (Platform.isIOS) {
+      final iosPlugin = _notificationsPlugin
+          .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>();
+      return await iosPlugin?.requestPermissions(
+        alert: true,
+        badge: true,
+        sound: true,
+      ) ?? false;
+    }
+    return false;
   }
 
   Future<void> showNotification({

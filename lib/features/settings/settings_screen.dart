@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/theme/app_colors.dart';
 import '../../core/theme/theme_mode_provider.dart';
 import '../../presentation/widgets/simple_card.dart';
+import '../../core/utils/notification_service.dart';
 
 class SettingsScreen extends ConsumerWidget {
   const SettingsScreen({super.key});
@@ -48,6 +49,48 @@ class SettingsScreen extends ConsumerWidget {
                     title: 'Theme',
                     subtitle: _themeModeLabel(themeMode),
                     onTap: () => _showThemePicker(context, ref),
+                  ),
+                ),
+                const SizedBox(height: 24),
+                _buildSectionHeader(context, 'Notifications'),
+                SimpleCard(
+                  padding: EdgeInsets.zero,
+                  borderRadius: 28,
+                  child: Column(
+                    children: [
+                      _buildSettingTile(
+                        context,
+                        icon: Icons.notifications_active_outlined,
+                        title: 'Request Permission',
+                        subtitle: 'Ensure notifications are allowed',
+                        onTap: () async {
+                          final granted = await NotificationService().requestPermission();
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(granted
+                                    ? 'Notification permission granted!'
+                                    : 'Notification permission denied or restricted.'),
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                      const Divider(height: 1, indent: 20, endIndent: 20),
+                      _buildSettingTile(
+                        context,
+                        icon: Icons.play_arrow_outlined,
+                        title: 'Test Notification',
+                        subtitle: 'Send a test notification immediately',
+                        onTap: () async {
+                          await NotificationService().showNotification(
+                            id: 99,
+                            title: "Test Notification",
+                            body: "DaySūtra notifications are working perfectly!",
+                          );
+                        },
+                      ),
+                    ],
                   ),
                 ),
                 const SizedBox(height: 48),
