@@ -6,6 +6,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../core/theme/app_colors.dart';
 import '../../data/repositories/providers.dart';
 import '../../domain/models/todo_task.dart';
+import '../../presentation/widgets/custom_feedback.dart';
 
 class TodoOverviewDialog extends ConsumerWidget {
   final VoidCallback onOpenTodoList;
@@ -21,6 +22,21 @@ class TodoOverviewDialog extends ConsumerWidget {
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final colors = theme.colorScheme;
+
+    ref.listen(tasksProvider, (previous, next) {
+      final prevTasks = previous?.valueOrNull;
+      final nextTasks = next.valueOrNull;
+
+      if (prevTasks != null && nextTasks != null && nextTasks.isNotEmpty) {
+        final wasAllCompleted = prevTasks.isNotEmpty && prevTasks.every((t) => t.isCompleted);
+        final isAllCompleted = nextTasks.every((t) => t.isCompleted);
+
+        if (isAllCompleted && !wasAllCompleted) {
+          AppFeedback.showSuccessSnackBar(context, "All tasks completed! Amazing job! 🎉");
+          Navigator.of(context).pop();
+        }
+      }
+    });
 
     return Dialog(
       backgroundColor: Colors.transparent,

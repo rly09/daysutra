@@ -82,6 +82,15 @@ class DaySutraApp extends ConsumerWidget {
     ref.listen(tasksProvider, (previous, next) {
       final tasks = next.valueOrNull ?? [];
       HomeWidgetManager.updateTodoWidget(tasks, isDark: ref.read(isDarkProvider));
+
+      final prevTasks = previous?.valueOrNull;
+      if (prevTasks != null && tasks.isNotEmpty) {
+        final wasAllCompleted = prevTasks.isNotEmpty && prevTasks.every((t) => t.isCompleted);
+        final isAllCompleted = tasks.every((t) => t.isCompleted);
+        if (isAllCompleted && !wasAllCompleted) {
+          NotificationService().showCongratsNotification();
+        }
+      }
     });
 
     return MaterialApp(

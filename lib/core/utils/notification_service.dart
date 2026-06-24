@@ -23,6 +23,14 @@ class NotificationService {
     "Tick tock. 9 PM. Your tasks are still there. Just like your unfulfilled potential.",
   ];
 
+  final List<String> _congratsMessages = [
+    "You actually did it! All tasks completed today. Color me impressed.",
+    "Look at you, being all productive! All tasks done for the day.",
+    "Zero tasks remaining. You earned a break (or a cookie).",
+    "Clean sweep! You've checked off every single task today.",
+    "All tasks completed! DaySutra approved efficiency.",
+  ];
+
   Future<void> init() async {
     tz_data.initializeTimeZones();
     
@@ -127,5 +135,15 @@ class NotificationService {
         body: "You haven't even set a life goal yet. Start there.",
       );
     }
+  }
+
+  Future<void> showCongratsNotification() async {
+    final random = Random();
+    final message = _congratsMessages[random.nextInt(_congratsMessages.length)];
+    await showNotification(
+      id: 3,
+      title: "All Tasks Done! 🎉",
+      body: message,
+    );
   }
 }
