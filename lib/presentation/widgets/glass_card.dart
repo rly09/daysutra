@@ -2,7 +2,7 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 import '../../core/theme/app_colors.dart';
 
-class GlassCard extends StatelessWidget {
+class GlassCard extends StatefulWidget {
   final Widget child;
   final double width;
   final double? height;
@@ -23,6 +23,13 @@ class GlassCard extends StatelessWidget {
   });
 
   @override
+  State<GlassCard> createState() => _GlassCardState();
+}
+
+class _GlassCardState extends State<GlassCard> {
+  bool _isPressed = false;
+
+  @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
 
@@ -36,10 +43,10 @@ class GlassCard extends StatelessWidget {
     );
 
     Widget cardContent = Container(
-      width: width,
-      height: height,
+      width: widget.width,
+      height: widget.height,
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(borderRadius),
+        borderRadius: BorderRadius.circular(widget.borderRadius),
         gradient: linearGradient,
         border: Border.all(
           width: 1.5,
@@ -47,12 +54,12 @@ class GlassCard extends StatelessWidget {
         ),
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(borderRadius),
+        borderRadius: BorderRadius.circular(widget.borderRadius),
         child: BackdropFilter(
           filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
           child: Container(
-            padding: padding,
-            child: child,
+            padding: widget.padding,
+            child: widget.child,
           ),
         ),
       ),
@@ -60,7 +67,7 @@ class GlassCard extends StatelessWidget {
 
     Widget card = Container(
       decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(borderRadius),
+        borderRadius: BorderRadius.circular(widget.borderRadius),
         boxShadow: [
           BoxShadow(
             color: (isDark ? Colors.black : AppColors.inkBlack).withValues(alpha: isDark ? 0.2 : 0.05),
@@ -72,13 +79,35 @@ class GlassCard extends StatelessWidget {
       child: cardContent,
     );
 
-    if (onTap != null || onLongPress != null) {
+    Widget animatedCard = AnimatedScale(
+      scale: _isPressed ? 0.97 : 1.0,
+      duration: const Duration(milliseconds: 120),
+      curve: Curves.easeOutCubic,
+      child: card,
+    );
+
+    if (widget.onTap != null || widget.onLongPress != null) {
       return GestureDetector(
-        onTap: onTap,
-        onLongPress: onLongPress,
+        onTapDown: (_) {
+          setState(() {
+            _isPressed = true;
+          });
+        },
+        onTapUp: (_) {
+          setState(() {
+            _isPressed = false;
+          });
+        },
+        onTapCancel: () {
+          setState(() {
+            _isPressed = false;
+          });
+        },
+        onTap: widget.onTap,
+        onLongPress: widget.onLongPress,
         child: MouseRegion(
           cursor: SystemMouseCursors.click,
-          child: card,
+          child: animatedCard,
         ),
       );
     }

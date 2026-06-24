@@ -36,7 +36,6 @@ class BackgroundTaskService {
   static void init() {
     Workmanager().initialize(
       callbackDispatcher,
-      isInDebugMode: false,
     );
   }
 

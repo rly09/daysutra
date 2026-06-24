@@ -22,6 +22,8 @@ class FloatingNavBar extends ConsumerWidget {
       alignment: Alignment.bottomCenter,
       clipBehavior: Clip.none,
       children: [
+        // Ensure stack size covers the full bounds of the protruding add button
+        const SizedBox(height: 120, width: 250),
         Container(
           margin: const EdgeInsets.only(bottom: 30),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),

@@ -15,6 +15,7 @@ class TodoCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final tasksAsync = ref.watch(tasksProvider);
+    final theme = Theme.of(context);
 
     return GlassCard(
       padding: const EdgeInsets.all(24),
@@ -101,7 +102,9 @@ class TodoCard extends ConsumerWidget {
                           child: CircularProgressIndicator(
                             value: progress,
                             strokeWidth: 6,
-                            backgroundColor: AppColors.softBone,
+                            backgroundColor: theme.brightness == Brightness.dark
+                                ? AppColors.charcoal
+                                : AppColors.softBone,
                             color: AppColors.signalOrange,
                           ),
                         ),

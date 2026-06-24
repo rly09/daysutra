@@ -23,9 +23,17 @@ class FolderDetailsScreen extends ConsumerWidget {
         actions: [
           IconButton(
             icon: const Icon(LucideIcons.trash2, color: AppColors.signalOrange),
-            onPressed: () {
-              folder.delete();
-              Navigator.pop(context);
+            onPressed: () async {
+              final box = ref.read(notesBoxProvider);
+              final folderNotes = box.values.where((n) => n.folderId == folder.id).toList();
+              for (var note in folderNotes) {
+                note.folderId = null;
+                await note.save();
+              }
+              await folder.delete();
+              if (context.mounted) {
+                Navigator.pop(context);
+              }
             },
           ),
           const SizedBox(width: 16),

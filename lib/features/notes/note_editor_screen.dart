@@ -26,6 +26,7 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
   late TextEditingController _contentController;
   late Note _currentNote;
   String? _selectedFolderId;
+  bool _hasSaved = false;
 
   @override
   void initState() {
@@ -46,11 +47,12 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
     _currentNote.updatedAt = DateTime.now();
   }
 
-  void _saveAndExit() {
+  void _saveOnPop() {
+    if (_hasSaved) return;
+    _hasSaved = true;
     _updateCurrentNote();
     
     if (_currentNote.title.isEmpty && _currentNote.content.isEmpty) {
-      Navigator.of(context).pop();
       return;
     }
 
@@ -59,9 +61,14 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
     } else {
       ref.read(notesBoxProvider).add(_currentNote);
     }
-    
-    AppFeedback.showSuccessSnackBar(context, 'Note saved');
-    Navigator.of(context).pop();
+  }
+
+  void _saveAndExit() {
+    _saveOnPop();
+    if (context.mounted) {
+      AppFeedback.showSuccessSnackBar(context, 'Note saved');
+      Navigator.of(context).pop();
+    }
   }
 
   void _showFolderPicker() {
@@ -159,7 +166,7 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
       appBar: AppBar(
         leading: IconButton(
           icon: const Icon(LucideIcons.chevronLeft),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: _saveAndExit,
         ),
         actions: [
           if (widget.existingNote != null)
@@ -199,88 +206,96 @@ class _NoteEditorScreenState extends ConsumerState<NoteEditorScreen> {
           ),
         ],
       ),
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start, // FIXED ALIGNMENT
-            children: [
-              const SizedBox(height: 16),
-              // Eyebrow: Folder and Date
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  GestureDetector(
-                    onTap: _showFolderPicker,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          (selectedFolder?.name ?? 'UNFILED').toUpperCase(),
-                          style: theme.textTheme.titleSmall?.copyWith(
-                            color: AppColors.signalOrange,
-                            letterSpacing: 2,
+      body: PopScope(
+        canPop: true,
+        onPopInvokedWithResult: (didPop, result) {
+          if (didPop) {
+            _saveOnPop();
+          }
+        },
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start, // FIXED ALIGNMENT
+              children: [
+                const SizedBox(height: 16),
+                // Eyebrow: Folder and Date
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    GestureDetector(
+                      onTap: _showFolderPicker,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            (selectedFolder?.name ?? 'UNFILED').toUpperCase(),
+                            style: theme.textTheme.titleSmall?.copyWith(
+                              color: AppColors.signalOrange,
+                              letterSpacing: 2,
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 4),
-                        const Icon(LucideIcons.chevronDown, size: 14, color: AppColors.signalOrange),
-                      ],
+                          const SizedBox(width: 4),
+                          const Icon(LucideIcons.chevronDown, size: 14, color: AppColors.signalOrange),
+                        ],
+                      ),
                     ),
-                  ),
-                  Text(
-                    AppDateUtils.getFormattedDate().toUpperCase(),
-                    style: theme.textTheme.bodyMedium?.copyWith(
-                      color: AppColors.slateGray.withValues(alpha: 0.6),
-                      fontWeight: FontWeight.w600,
-                      fontSize: 12,
-                      letterSpacing: 1,
+                    Text(
+                      AppDateUtils.getFormattedDate().toUpperCase(),
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: AppColors.slateGray.withValues(alpha: 0.6),
+                        fontWeight: FontWeight.w600,
+                        fontSize: 12,
+                        letterSpacing: 1,
+                      ),
                     ),
-                  ),
-                ],
-              ).animate().fadeIn(duration: 400.ms).slideX(begin: -0.1, end: 0),
-              
-              const SizedBox(height: 32),
-              
-              // Title Field
-              TextField(
-                controller: _titleController,
-                decoration: InputDecoration(
-                  hintText: 'Title',
-                  hintStyle: theme.textTheme.displayMedium?.copyWith(
-                    color: AppColors.dustTaupe.withValues(alpha: 0.5),
-                  ),
-                  border: InputBorder.none,
-                  contentPadding: EdgeInsets.zero,
-                ),
-                style: theme.textTheme.displayMedium,
-                maxLines: null,
-                textCapitalization: TextCapitalization.sentences,
-              ).animate().fadeIn(duration: 500.ms, delay: 100.ms).slideY(begin: 0.1, end: 0),
-              
-              const SizedBox(height: 16),
-              
-              // Content Field
-              Expanded(
-                child: TextField(
-                  controller: _contentController,
+                  ],
+                ).animate().fadeIn(duration: 400.ms).slideX(begin: -0.1, end: 0),
+                
+                const SizedBox(height: 32),
+                
+                // Title Field
+                TextField(
+                  controller: _titleController,
                   decoration: InputDecoration(
-                    hintText: 'Start writing...',
-                    hintStyle: theme.textTheme.bodyLarge?.copyWith(
+                    hintText: 'Title',
+                    hintStyle: theme.textTheme.displayMedium?.copyWith(
                       color: AppColors.dustTaupe.withValues(alpha: 0.5),
                     ),
                     border: InputBorder.none,
                     contentPadding: EdgeInsets.zero,
                   ),
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    height: 1.6,
-                  ),
+                  style: theme.textTheme.displayMedium,
                   maxLines: null,
-                  expands: true,
-                  textAlignVertical: TextAlignVertical.top,
                   textCapitalization: TextCapitalization.sentences,
-                ),
-              ).animate().fadeIn(duration: 600.ms, delay: 200.ms),
-            ],
+                ).animate().fadeIn(duration: 500.ms, delay: 100.ms).slideY(begin: 0.1, end: 0),
+                
+                const SizedBox(height: 16),
+                
+                // Content Field
+                Expanded(
+                  child: TextField(
+                    controller: _contentController,
+                    decoration: InputDecoration(
+                      hintText: 'Start writing...',
+                      hintStyle: theme.textTheme.bodyLarge?.copyWith(
+                        color: AppColors.dustTaupe.withValues(alpha: 0.5),
+                      ),
+                      border: InputBorder.none,
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                    style: theme.textTheme.bodyLarge?.copyWith(
+                      height: 1.6,
+                    ),
+                    maxLines: null,
+                    expands: true,
+                    textAlignVertical: TextAlignVertical.top,
+                    textCapitalization: TextCapitalization.sentences,
+                  ),
+                ).animate().fadeIn(duration: 600.ms, delay: 200.ms),
+              ],
+            ),
           ),
         ),
       ),

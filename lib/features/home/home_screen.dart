@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:confetti/confetti.dart';
@@ -24,6 +25,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   int _currentIndex = 0;
   late ConfettiController _confettiController;
   bool _allTasksCompletedPreviously = false;
+  StreamSubscription<Uri?>? _widgetClickedSubscription;
 
   @override
   void initState() {
@@ -41,7 +43,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
     });
 
     // Listen to widget clicks when the app is in background/foreground
-    HomeWidget.widgetClicked.listen((uri) {
+    _widgetClickedSubscription = HomeWidget.widgetClicked.listen((uri) {
       if (uri != null) {
         _handleHomeWidgetClick(uri);
       }
@@ -56,6 +58,7 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   void dispose() {
+    _widgetClickedSubscription?.cancel();
     _confettiController.dispose();
     super.dispose();
   }

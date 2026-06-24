@@ -165,7 +165,9 @@ class SettingsScreen extends ConsumerWidget {
       leading: Container(
         padding: const EdgeInsets.all(8),
         decoration: BoxDecoration(
-          color: AppColors.softBone,
+          color: theme.brightness == Brightness.dark
+              ? AppColors.charcoal
+              : AppColors.softBone,
           borderRadius: BorderRadius.circular(12),
         ),
         child: Icon(icon, color: theme.colorScheme.onSurface, size: 20),
