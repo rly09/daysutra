@@ -8,6 +8,8 @@ import 'core/utils/daily_refresh_manager.dart';
 import 'core/utils/notification_service.dart';
 import 'core/utils/background_task_service.dart';
 import 'features/home/home_screen.dart';
+import 'features/splash/providers/onboarding_provider.dart';
+import 'features/splash/onboarding_screen.dart';
 import 'data/repositories/providers.dart';
 import 'core/services/home_widget_manager.dart';
 
@@ -88,7 +90,20 @@ class DaySutraApp extends ConsumerWidget {
       theme: AppTheme.lightTheme,
       darkTheme: AppTheme.darkTheme,
       themeMode: themeMode,
-      home: const HomeScreen(),
+      home: const AppEntryGate(),
     );
+  }
+}
+
+class AppEntryGate extends ConsumerWidget {
+  const AppEntryGate({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final onboardingCompleted = ref.watch(onboardingCompletedProvider);
+    if (!onboardingCompleted) {
+      return const OnboardingScreen();
+    }
+    return const HomeScreen();
   }
 }
