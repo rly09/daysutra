@@ -1,7 +1,6 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:confetti/confetti.dart';
 
 import 'package:home_widget/home_widget.dart';
 
@@ -12,7 +11,6 @@ import '../notes/note_editor_screen.dart';
 import '../notes/widgets/note_grid.dart';
 import '../settings/settings_screen.dart';
 import '../../data/repositories/providers.dart';
-import '../../core/theme/app_colors.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -23,13 +21,11 @@ class HomeScreen extends ConsumerStatefulWidget {
 
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   int _currentIndex = 0;
-  late ConfettiController _confettiController;
   StreamSubscription<Uri?>? _widgetClickedSubscription;
 
   @override
   void initState() {
     super.initState();
-    _confettiController = ConfettiController(duration: const Duration(seconds: 3));
     _initHomeWidget();
   }
 
@@ -58,7 +54,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   void dispose() {
     _widgetClickedSubscription?.cancel();
-    _confettiController.dispose();
     super.dispose();
   }
 
@@ -77,13 +72,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // Listen to tasks completion for confetti
-    ref.listen<bool>(allTasksCompletedProvider, (previous, next) {
-      if (next && previous == false) {
-        _confettiController.play();
-      }
-    });
-
     return Scaffold(
       body: Stack(
         children: [
@@ -128,28 +116,6 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
               // Tab 1: Settings
               const SettingsScreen(),
             ],
-          ),
-
-          // Confetti overlay
-          Align(
-            alignment: Alignment.topCenter,
-            child: ConfettiWidget(
-              confettiController: _confettiController,
-              blastDirectionality: BlastDirectionality.explosive,
-              shouldLoop: false,
-              emissionFrequency: 0.1, // Increased frequency
-              numberOfParticles: 20,  // More particles per emission
-              gravity: 0.1,
-              colors: const [
-                AppColors.signalOrange,
-                Colors.blue,
-                Colors.pink,
-                Colors.orange,
-                Colors.purple,
-                Colors.yellow,
-                Colors.green,
-              ],
-            ),
           ),
 
           // Floating Nav Bar
