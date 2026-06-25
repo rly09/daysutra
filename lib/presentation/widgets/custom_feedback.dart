@@ -1,6 +1,8 @@
+import 'dart:ui';
 import 'package:flutter/material.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../core/theme/app_colors.dart';
+import 'celebration_dialog.dart';
 
 class AppFeedback {
   static void showSuccessSnackBar(BuildContext context, String message) {
@@ -78,6 +80,22 @@ class AppFeedback {
           ),
         ],
       ),
+    );
+  }
+
+  static Future<void> showCelebration(BuildContext context, {String? title, String? message}) {
+    return showDialog(
+      context: context,
+      barrierColor: Colors.black.withValues(alpha: 0.35),
+      builder: (dialogContext) {
+        return BackdropFilter(
+          filter: ImageFilter.blur(sigmaX: 8, sigmaY: 8),
+          child: CelebrationDialog(
+            title: title ?? 'All Todos Completed!',
+            message: message ?? 'Incredible job! You have cleared your checklist for today. Keep up the amazing momentum!',
+          ),
+        );
+      },
     );
   }
 }

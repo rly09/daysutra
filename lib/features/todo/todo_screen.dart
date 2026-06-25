@@ -62,17 +62,9 @@ class TodoScreen extends ConsumerWidget {
     final theme = Theme.of(context);
     final colors = theme.colorScheme;
 
-    ref.listen(tasksProvider, (previous, next) {
-      final prevTasks = previous?.valueOrNull;
-      final nextTasks = next.valueOrNull;
-
-      if (prevTasks != null && nextTasks != null && nextTasks.isNotEmpty) {
-        final wasAllCompleted = prevTasks.isNotEmpty && prevTasks.every((t) => t.isCompleted);
-        final isAllCompleted = nextTasks.every((t) => t.isCompleted);
-
-        if (isAllCompleted && !wasAllCompleted) {
-          AppFeedback.showSuccessSnackBar(context, "All tasks completed! Amazing job! 🎉");
-        }
+    ref.listen<bool>(allTasksCompletedProvider, (previous, next) {
+      if (next && previous == false) {
+        AppFeedback.showCelebration(context);
       }
     });
 

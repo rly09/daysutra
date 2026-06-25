@@ -24,7 +24,6 @@ class HomeScreen extends ConsumerStatefulWidget {
 class _HomeScreenState extends ConsumerState<HomeScreen> {
   int _currentIndex = 0;
   late ConfettiController _confettiController;
-  bool _allTasksCompletedPreviously = false;
   StreamSubscription<Uri?>? _widgetClickedSubscription;
 
   @override
@@ -79,19 +78,9 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     // Listen to tasks completion for confetti
-    ref.listen(tasksProvider, (previous, next) {
-      final tasks = next.valueOrNull ?? [];
-      if (tasks.isNotEmpty) {
-        final allCompleted = tasks.every((t) => t.isCompleted);
-        
-        // Trigger only if state changed from not-all-completed to all-completed
-        if (allCompleted && !_allTasksCompletedPreviously) {
-          _confettiController.play();
-        }
-        _allTasksCompletedPreviously = allCompleted;
-      } else {
-        // If list is empty, reset the state
-        _allTasksCompletedPreviously = false;
+    ref.listen<bool>(allTasksCompletedProvider, (previous, next) {
+      if (next && previous == false) {
+        _confettiController.play();
       }
     });
 

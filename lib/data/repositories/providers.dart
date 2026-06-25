@@ -38,6 +38,13 @@ final tasksProvider = StreamProvider<List<TodoTask>>((ref) {
       .startWith(_sortedTasks(box.values.toList()));
 });
 
+final allTasksCompletedProvider = Provider<bool>((ref) {
+  final tasksAsync = ref.watch(tasksProvider);
+  final tasks = tasksAsync.valueOrNull ?? [];
+  if (tasks.isEmpty) return false;
+  return tasks.every((t) => t.isCompleted);
+});
+
 final goalsProvider = StreamProvider<List<LifeGoal>>((ref) {
   final box = ref.watch(goalsBoxProvider);
   return box
