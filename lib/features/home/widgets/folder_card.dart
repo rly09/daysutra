@@ -49,11 +49,41 @@ class FolderCard extends ConsumerWidget {
               data: (folders) {
                 if (folders.isEmpty) {
                   return Center(
-                    child: Text(
-                      '+ Add Folder',
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: AppColors.slateGray,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF10B981).withValues(alpha: 0.10),
+                            shape: BoxShape.circle,
                           ),
+                          child: const Icon(
+                            LucideIcons.folderPlus,
+                            color: Color(0xFF10B981),
+                            size: 18,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          'No folders yet',
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            color: AppColors.slateGray,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 13,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 3),
+                        Text(
+                          'Tap to create one',
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: AppColors.dustTaupe,
+                            fontSize: 11,
+                          ),
+                        ),
+                      ],
                     ),
                   );
                 }

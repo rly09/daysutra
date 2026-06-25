@@ -110,12 +110,12 @@ class _HomeScreenState extends ConsumerState<HomeScreen> {
                     final unfiledNotesAsync = ref.watch(unfiledNotesProvider);
 
                     return ListView(
-                      padding: const EdgeInsets.only(left: 24, right: 24, top: 40, bottom: 120),
+                      padding: const EdgeInsets.only(left: 24, right: 24, top: 32, bottom: 120),
                       children: [
                         const GreetingSection(),
-                        const SizedBox(height: 48),
+                        const SizedBox(height: 32),
                         const BentoGrid(),
-                        
+
                         unfiledNotesAsync.when(
                           data: (notes) {
                             if (notes.isEmpty) return const SizedBox.shrink();

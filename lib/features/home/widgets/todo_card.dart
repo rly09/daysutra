@@ -77,11 +77,41 @@ class TodoCard extends ConsumerWidget {
               data: (tasks) {
                 if (tasks.isEmpty) {
                   return Center(
-                    child: Text(
-                      '+ Add Task',
-                      style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                            color: AppColors.slateGray,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 40,
+                          height: 40,
+                          decoration: BoxDecoration(
+                            color: AppColors.signalOrange.withValues(alpha: 0.10),
+                            shape: BoxShape.circle,
                           ),
+                          child: const Icon(
+                            LucideIcons.listTodo,
+                            color: AppColors.signalOrange,
+                            size: 18,
+                          ),
+                        ),
+                        const SizedBox(height: 10),
+                        Text(
+                          'No tasks',
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            color: AppColors.slateGray,
+                            fontWeight: FontWeight.w500,
+                            fontSize: 13,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 3),
+                        Text(
+                          'Tap to add one',
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: AppColors.dustTaupe,
+                            fontSize: 11,
+                          ),
+                        ),
+                      ],
                     ),
                   );
                 }

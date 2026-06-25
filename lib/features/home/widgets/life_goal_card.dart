@@ -49,11 +49,40 @@ class LifeGoalCard extends ConsumerWidget {
               data: (goals) {
                 if (goals.isEmpty) {
                   return Center(
-                    child: Text(
-                      '+ Add Life Goal',
-                      style: Theme.of(context).textTheme.titleLarge?.copyWith(
-                            color: AppColors.slateGray,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Container(
+                          width: 48,
+                          height: 48,
+                          decoration: BoxDecoration(
+                            color: AppColors.signalOrange.withValues(alpha: 0.10),
+                            shape: BoxShape.circle,
                           ),
+                          child: const Icon(
+                            LucideIcons.target,
+                            color: AppColors.signalOrange,
+                            size: 22,
+                          ),
+                        ),
+                        const SizedBox(height: 12),
+                        Text(
+                          'Set your life goal',
+                          style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+                            color: AppColors.slateGray,
+                            fontWeight: FontWeight.w500,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          'Tap to get started',
+                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: AppColors.dustTaupe,
+                            fontSize: 12,
+                          ),
+                        ),
+                      ],
                     ),
                   );
                 }
