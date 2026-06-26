@@ -2,6 +2,8 @@ import 'dart:io';
 import 'dart:math';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:timezone/data/latest.dart' as tz_data;
+import 'package:timezone/timezone.dart' as tz;
+import 'package:flutter_timezone/flutter_timezone.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import '../../domain/models/todo_task.dart';
 import '../../domain/models/life_goal.dart';
@@ -33,6 +35,13 @@ class NotificationService {
 
   Future<void> init() async {
     tz_data.initializeTimeZones();
+    try {
+      final String timeZoneName = await FlutterTimezone.getLocalTimezone();
+      tz.setLocalLocation(tz.getLocation(timeZoneName));
+    } catch (e) {
+      // Fallback to UTC if timezone detection fails
+      tz.setLocalLocation(tz.UTC);
+    }
     
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/launcher_icon');
@@ -144,6 +153,98 @@ class NotificationService {
       id: 3,
       title: "All Tasks Done! 🎉",
       body: message,
+    );
+  }
+
+  Future<void> scheduleDailyLifeGoalReminder() async {
+    if (!Hive.isBoxOpen(HiveRepository.goalsBoxName)) {
+      await Hive.openBox<LifeGoal>(HiveRepository.goalsBoxName);
+    }
+
+    final goalsBox = Hive.box<LifeGoal>(HiveRepository.goalsBoxName);
+    String title = "Morning Motivation";
+    String body = "You haven't even set a life goal yet. Start there.";
+
+    if (goalsBox.isNotEmpty) {
+      final goal = goalsBox.values.first;
+      body = "Remember your goal: ${goal.title}. Now get to work.";
+    }
+
+    await _scheduleDailyNotification(
+      id: 2,
+      title: title,
+      body: body,
+      hour: 8,
+      minute: 0,
+    );
+  }
+
+  Future<void> scheduleDailySarcasticReminder() async {
+    if (!Hive.isBoxOpen(HiveRepository.tasksBoxName)) {
+      await Hive.openBox<TodoTask>(HiveRepository.tasksBoxName);
+    }
+
+    final tasksBox = Hive.box<TodoTask>(HiveRepository.tasksBoxName);
+    final incompleteCount = tasksBox.values.where((task) => !task.isCompleted).length;
+
+    if (incompleteCount > 0) {
+      final random = Random();
+      final message = _sarcasticMessages[random.nextInt(_sarcasticMessages.length)];
+      
+      await _scheduleDailyNotification(
+        id: 1,
+        title: "Still Slacking?",
+        body: "$message ($incompleteCount tasks left)",
+        hour: 21,
+        minute: 0,
+      );
+    } else {
+      // Cancel the scheduled reminder if there are no incomplete tasks
+      await _notificationsPlugin.cancel(id: 1);
+    }
+  }
+
+  Future<void> _scheduleDailyNotification({
+    required int id,
+    required String title,
+    required String body,
+    required int hour,
+    required int minute,
+  }) async {
+    final tz.TZDateTime now = tz.TZDateTime.now(tz.local);
+    tz.TZDateTime scheduledDate = tz.TZDateTime(
+      tz.local,
+      now.year,
+      now.month,
+      now.day,
+      hour,
+      minute,
+    );
+
+    if (scheduledDate.isBefore(now)) {
+      scheduledDate = scheduledDate.add(const Duration(days: 1));
+    }
+
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+      'daysutra_scheduled_reminders',
+      'DaySutra Scheduled Reminders',
+      channelDescription: 'Scheduled daily reminders',
+      importance: Importance.max,
+      priority: Priority.high,
+    );
+
+    const NotificationDetails platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
+
+    await _notificationsPlugin.zonedSchedule(
+      id: id,
+      title: title,
+      body: body,
+      scheduledDate: scheduledDate,
+      notificationDetails: platformChannelSpecifics,
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      matchDateTimeComponents: DateTimeComponents.time,
     );
   }
 }

@@ -6,7 +6,6 @@ import 'core/theme/theme_mode_provider.dart';
 import 'data/repositories/hive_repository.dart';
 import 'core/utils/daily_refresh_manager.dart';
 import 'core/utils/notification_service.dart';
-import 'core/utils/background_task_service.dart';
 import 'features/home/home_screen.dart';
 import 'features/splash/providers/onboarding_provider.dart';
 import 'features/splash/onboarding_screen.dart';
@@ -23,9 +22,9 @@ void main() async {
   final notificationService = NotificationService();
   await notificationService.init();
 
-  // Initialize Background Tasks
-  BackgroundTaskService.init();
-  BackgroundTaskService.scheduleTasks();
+  // Schedule daily reminders on startup
+  await notificationService.scheduleDailyLifeGoalReminder();
+  await notificationService.scheduleDailySarcasticReminder();
 
   runApp(
     const ProviderScope(
@@ -72,6 +71,7 @@ class DaySutraApp extends ConsumerWidget {
       final goal = goals.isNotEmpty ? goals.first : null;
       HomeWidgetManager.updateLifeGoalWidget(goal, isDark: ref.read(isDarkProvider));
       HomeWidgetManager.updateInspirationWidget(goal, isDark: ref.read(isDarkProvider));
+      NotificationService().scheduleDailyLifeGoalReminder();
     });
 
     ref.listen(foldersProvider, (previous, next) {
@@ -82,6 +82,7 @@ class DaySutraApp extends ConsumerWidget {
     ref.listen(tasksProvider, (previous, next) {
       final tasks = next.valueOrNull ?? [];
       HomeWidgetManager.updateTodoWidget(tasks, isDark: ref.read(isDarkProvider));
+      NotificationService().scheduleDailySarcasticReminder();
     });
 
     ref.listen<bool>(allTasksCompletedProvider, (previous, next) {
