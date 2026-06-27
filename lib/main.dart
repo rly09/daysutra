@@ -14,17 +14,18 @@ import 'core/services/home_widget_manager.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
   await HiveRepository.init();
   await DailyRefreshManager.checkAndRefreshTasks();
   
-  // Initialize Notifications
+  // Initialize and Schedule Notifications safely
   final notificationService = NotificationService();
-  await notificationService.init();
-
-  // Schedule daily reminders on startup
-  await notificationService.scheduleDailyLifeGoalReminder();
-  await notificationService.scheduleDailySarcasticReminder();
+  try {
+    await notificationService.init();
+    await notificationService.scheduleDailyLifeGoalReminder();
+    await notificationService.scheduleDailySarcasticReminder();
+  } catch (e) {
+    debugPrint("Failed to initialize or schedule notifications: $e");
+  }
 
   runApp(
     const ProviderScope(

@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:flutter/foundation.dart';
 import 'package:timezone/data/latest.dart' as tz_data;
 import 'package:timezone/timezone.dart' as tz;
 import 'package:flutter_timezone/flutter_timezone.dart';
@@ -14,7 +15,8 @@ class NotificationService {
   factory NotificationService() => _instance;
   NotificationService._internal();
 
-  final FlutterLocalNotificationsPlugin _notificationsPlugin = FlutterLocalNotificationsPlugin();
+  final FlutterLocalNotificationsPlugin _notificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
   final List<String> _sarcasticMessages = [
     "Oh, look who's still got tasks. 9 PM and you're already giving up?",
@@ -36,30 +38,31 @@ class NotificationService {
   Future<void> init() async {
     tz_data.initializeTimeZones();
     try {
-      final String timeZoneName = await FlutterTimezone.getLocalTimezone();
+      final String timeZoneName = (await FlutterTimezone.getLocalTimezone()).identifier;
       tz.setLocalLocation(tz.getLocation(timeZoneName));
     } catch (e) {
+      debugPrint("Error getting timezone, falling back to UTC: $e");
       // Fallback to UTC if timezone detection fails
       tz.setLocalLocation(tz.UTC);
     }
-    
+
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/launcher_icon');
 
-    const DarwinInitializationSettings initializationSettingsIOS = DarwinInitializationSettings(
-      requestAlertPermission: true,
-      requestBadgePermission: true,
-      requestSoundPermission: true,
-    );
+    const DarwinInitializationSettings initializationSettingsIOS =
+        DarwinInitializationSettings(
+          requestAlertPermission: true,
+          requestBadgePermission: true,
+          requestSoundPermission: true,
+        );
 
-    const InitializationSettings initializationSettings = InitializationSettings(
-      android: initializationSettingsAndroid,
-      iOS: initializationSettingsIOS,
-    );
+    const InitializationSettings initializationSettings =
+        InitializationSettings(
+          android: initializationSettingsAndroid,
+          iOS: initializationSettingsIOS,
+        );
 
-    await _notificationsPlugin.initialize(
-      settings: initializationSettings,
-    );
+    await _notificationsPlugin.initialize(settings: initializationSettings);
 
     await requestPermission();
   }
@@ -67,16 +70,21 @@ class NotificationService {
   Future<bool> requestPermission() async {
     if (Platform.isAndroid) {
       final androidPlugin = _notificationsPlugin
-          .resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+          .resolvePlatformSpecificImplementation<
+            AndroidFlutterLocalNotificationsPlugin
+          >();
       return await androidPlugin?.requestNotificationsPermission() ?? false;
     } else if (Platform.isIOS) {
       final iosPlugin = _notificationsPlugin
-          .resolvePlatformSpecificImplementation<IOSFlutterLocalNotificationsPlugin>();
+          .resolvePlatformSpecificImplementation<
+            IOSFlutterLocalNotificationsPlugin
+          >();
       return await iosPlugin?.requestPermissions(
-        alert: true,
-        badge: true,
-        sound: true,
-      ) ?? false;
+            alert: true,
+            badge: true,
+            sound: true,
+          ) ??
+          false;
     }
     return false;
   }
@@ -88,14 +96,15 @@ class NotificationService {
   }) async {
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
-      'daysutra_reminders',
-      'DaySutra Reminders',
-      importance: Importance.max,
-      priority: Priority.high,
-    );
+          'daysutra_reminders',
+          'DaySutra Reminders',
+          importance: Importance.max,
+          priority: Priority.high,
+        );
 
-    const NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(
+      android: androidPlatformChannelSpecifics,
+    );
 
     await _notificationsPlugin.show(
       id: id,
@@ -109,13 +118,16 @@ class NotificationService {
     if (!Hive.isBoxOpen(HiveRepository.tasksBoxName)) {
       await Hive.openBox<TodoTask>(HiveRepository.tasksBoxName);
     }
-    
+
     final tasksBox = Hive.box<TodoTask>(HiveRepository.tasksBoxName);
-    final incompleteCount = tasksBox.values.where((task) => !task.isCompleted).length;
+    final incompleteCount = tasksBox.values
+        .where((task) => !task.isCompleted)
+        .length;
 
     if (incompleteCount > 0) {
       final random = Random();
-      final message = _sarcasticMessages[random.nextInt(_sarcasticMessages.length)];
+      final message =
+          _sarcasticMessages[random.nextInt(_sarcasticMessages.length)];
       await showNotification(
         id: 1,
         title: "Still Slacking?",
@@ -149,11 +161,7 @@ class NotificationService {
   Future<void> showCongratsNotification() async {
     final random = Random();
     final message = _congratsMessages[random.nextInt(_congratsMessages.length)];
-    await showNotification(
-      id: 3,
-      title: "All Tasks Done! 🎉",
-      body: message,
-    );
+    await showNotification(id: 3, title: "All Tasks Done! 🎉", body: message);
   }
 
   Future<void> scheduleDailyLifeGoalReminder() async {
@@ -185,12 +193,15 @@ class NotificationService {
     }
 
     final tasksBox = Hive.box<TodoTask>(HiveRepository.tasksBoxName);
-    final incompleteCount = tasksBox.values.where((task) => !task.isCompleted).length;
+    final incompleteCount = tasksBox.values
+        .where((task) => !task.isCompleted)
+        .length;
 
     if (incompleteCount > 0) {
       final random = Random();
-      final message = _sarcasticMessages[random.nextInt(_sarcasticMessages.length)];
-      
+      final message =
+          _sarcasticMessages[random.nextInt(_sarcasticMessages.length)];
+
       await _scheduleDailyNotification(
         id: 1,
         title: "Still Slacking?",
@@ -227,15 +238,16 @@ class NotificationService {
 
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
         AndroidNotificationDetails(
-      'daysutra_scheduled_reminders',
-      'DaySutra Scheduled Reminders',
-      channelDescription: 'Scheduled daily reminders',
-      importance: Importance.max,
-      priority: Priority.high,
-    );
+          'daysutra_scheduled_reminders',
+          'DaySutra Scheduled Reminders',
+          channelDescription: 'Scheduled daily reminders',
+          importance: Importance.max,
+          priority: Priority.high,
+        );
 
-    const NotificationDetails platformChannelSpecifics =
-        NotificationDetails(android: androidPlatformChannelSpecifics);
+    const NotificationDetails platformChannelSpecifics = NotificationDetails(
+      android: androidPlatformChannelSpecifics,
+    );
 
     await _notificationsPlugin.zonedSchedule(
       id: id,
@@ -243,7 +255,7 @@ class NotificationService {
       body: body,
       scheduledDate: scheduledDate,
       notificationDetails: platformChannelSpecifics,
-      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
       matchDateTimeComponents: DateTimeComponents.time,
     );
   }
