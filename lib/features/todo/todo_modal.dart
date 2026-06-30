@@ -9,7 +9,9 @@ import '../../presentation/widgets/custom_feedback.dart';
 import '../../core/theme/app_colors.dart';
 
 class TodoModal extends ConsumerStatefulWidget {
-  const TodoModal({super.key});
+  final TodoTask? existingTask;
+
+  const TodoModal({super.key, this.existingTask});
 
   @override
   ConsumerState<TodoModal> createState() => _TodoModalState();
@@ -22,7 +24,8 @@ class _TodoModalState extends ConsumerState<TodoModal> {
   @override
   void initState() {
     super.initState();
-    _titleController = TextEditingController();
+    _titleController = TextEditingController(text: widget.existingTask?.title ?? '');
+    _priority = widget.existingTask?.priority ?? 1;
   }
 
   @override
@@ -35,13 +38,33 @@ class _TodoModalState extends ConsumerState<TodoModal> {
     if (_titleController.text.trim().isEmpty) return;
 
     final box = ref.read(tasksBoxProvider);
-    final task = TodoTask(
-      title: _titleController.text.trim(),
-      priority: _priority,
-    );
-    box.add(task);
+    final bool isUpdating = widget.existingTask != null;
+
+    if (isUpdating) {
+      widget.existingTask!.title = _titleController.text.trim();
+      widget.existingTask!.priority = _priority;
+      widget.existingTask!.save();
+    } else {
+      final task = TodoTask(
+        title: _titleController.text.trim(),
+        priority: _priority,
+      );
+      box.add(task);
+    }
+    
     Navigator.of(context).pop();
-    AppFeedback.showSuccessSnackBar(context, 'Task added to your list');
+    AppFeedback.showSuccessSnackBar(
+      context, 
+      isUpdating ? 'Task updated successfully' : 'Task added to your list',
+    );
+  }
+
+  void _delete() {
+    if (widget.existingTask != null) {
+      widget.existingTask!.delete();
+      Navigator.of(context).pop();
+      AppFeedback.showInfoSnackBar(context, 'Task deleted');
+    }
   }
 
   @override
@@ -79,7 +102,7 @@ class _TodoModalState extends ConsumerState<TodoModal> {
               Icon(LucideIcons.listTodo, color: theme.colorScheme.primary),
               const SizedBox(width: 12),
               Text(
-                'Add Task',
+                widget.existingTask == null ? 'Add Task' : 'Edit Task',
                 style: theme.textTheme.titleLarge?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -142,8 +165,13 @@ class _TodoModalState extends ConsumerState<TodoModal> {
           ),
           const SizedBox(height: 32),
           Row(
-            mainAxisAlignment: MainAxisAlignment.end,
             children: [
+              if (widget.existingTask != null)
+                IconButton(
+                  onPressed: _delete,
+                  icon: const Icon(LucideIcons.trash2, color: AppColors.signalOrange),
+                ),
+              const Spacer(),
               PillButton(
                 label: 'Cancel',
                 isPrimary: false,

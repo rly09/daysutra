@@ -145,6 +145,15 @@ class TodoScreen extends ConsumerWidget {
                 child: SimpleCard(
                   margin: const EdgeInsets.only(bottom: 12),
                   padding: EdgeInsets.zero,
+                  onTap: () {
+                    showModalBottomSheet(
+                      context: context,
+                      isScrollControlled: true,
+                      backgroundColor: Colors.transparent,
+                      elevation: 0,
+                      builder: (_) => TodoModal(existingTask: task),
+                    );
+                  },
                   child: Container(
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(24),

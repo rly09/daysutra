@@ -5,6 +5,8 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../data/repositories/providers.dart';
 import '../../core/theme/app_colors.dart';
 import '../notes/note_editor_screen.dart';
+import '../todo/todo_modal.dart';
+import '../goals/goal_modal.dart';
 
 class SearchScreen extends ConsumerStatefulWidget {
   const SearchScreen({super.key});
@@ -81,6 +83,15 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
                     ? 'Low priority'
                     : 'Medium priority',
               ),
+              onTap: () {
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  builder: (_) => TodoModal(existingTask: t),
+                );
+              },
             ),
           );
         }
@@ -101,6 +112,15 @@ class _SearchScreenState extends ConsumerState<SearchScreen> {
               leading: const Icon(LucideIcons.target),
               title: Text(g.title),
               subtitle: const Text('Life Goal'),
+              onTap: () {
+                showModalBottomSheet(
+                  context: context,
+                  isScrollControlled: true,
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  builder: (_) => GoalModal(existingGoal: g),
+                );
+              },
             ),
           );
         }
