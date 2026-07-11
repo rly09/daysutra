@@ -38,7 +38,7 @@ class _GlassCardState extends State<GlassCard> {
       end: Alignment.bottomRight,
       colors: [
         (isDark ? Colors.white : Colors.white).withValues(alpha: isDark ? 0.05 : 0.4),
-        (isDark ? Colors.white : Colors.white).withValues(alpha: isDark ? 0.05 : 0.4),
+        (isDark ? Colors.white : Colors.white).withValues(alpha: isDark ? 0.08 : 0.6),
       ],
     );
 
