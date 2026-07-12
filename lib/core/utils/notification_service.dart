@@ -73,7 +73,16 @@ class NotificationService {
           .resolvePlatformSpecificImplementation<
             AndroidFlutterLocalNotificationsPlugin
           >();
-      return await androidPlugin?.requestNotificationsPermission() ?? false;
+      final bool notificationGranted =
+          await androidPlugin?.requestNotificationsPermission() ?? false;
+      
+      try {
+        await androidPlugin?.requestExactAlarmsPermission();
+      } catch (e) {
+        debugPrint("Error requesting exact alarm permission: $e");
+      }
+      
+      return notificationGranted;
     } else if (Platform.isIOS) {
       final iosPlugin = _notificationsPlugin
           .resolvePlatformSpecificImplementation<
@@ -249,14 +258,31 @@ class NotificationService {
       android: androidPlatformChannelSpecifics,
     );
 
-    await _notificationsPlugin.zonedSchedule(
-      id: id,
-      title: title,
-      body: body,
-      scheduledDate: scheduledDate,
-      notificationDetails: platformChannelSpecifics,
-      androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
-      matchDateTimeComponents: DateTimeComponents.time,
-    );
+    try {
+      await _notificationsPlugin.zonedSchedule(
+        id: id,
+        title: title,
+        body: body,
+        scheduledDate: scheduledDate,
+        notificationDetails: platformChannelSpecifics,
+        androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
+        matchDateTimeComponents: DateTimeComponents.time,
+      );
+    } catch (e) {
+      debugPrint("Failed to schedule exact alarm: $e. Falling back to inexact.");
+      try {
+        await _notificationsPlugin.zonedSchedule(
+          id: id,
+          title: title,
+          body: body,
+          scheduledDate: scheduledDate,
+          notificationDetails: platformChannelSpecifics,
+          androidScheduleMode: AndroidScheduleMode.inexactAllowWhileIdle,
+          matchDateTimeComponents: DateTimeComponents.time,
+        );
+      } catch (ex) {
+        debugPrint("Failed to schedule inexact alarm: $ex");
+      }
+    }
   }
 }
